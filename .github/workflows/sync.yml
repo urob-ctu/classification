@@ -20,7 +20,7 @@ jobs:
         git config --global user.name 'Aleš Kučera Bot'
         git config --global user.email 'kuceral4@fel.cvut.cz'
     
-      - name: Remove sensitive files and folders
+    - name: Remove sensitive files and folders
       run: |
         git rm -r --cached .github
         git commit -m "Remove private files and folders before sync"
