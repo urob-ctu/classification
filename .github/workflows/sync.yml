@@ -17,7 +17,7 @@ jobs:
 
     - name: Remove sensitive files and folders
       run: |
-        git rm -r --cached path/to/private/folder1
+        git rm -r --cached .github
         git commit -m "Remove private files and folders before sync"
 
     - name: Add public repo remote
