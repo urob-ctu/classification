@@ -15,6 +15,11 @@ jobs:
       with:
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
+    - name: Remove sensitive files and folders
+      run: |
+        git rm -r --cached path/to/private/folder1
+        git commit -m "Remove private files and folders before sync"
+
     - name: Add public repo remote
       run: |
         git remote add public https://github.com/urob-ctu/classification.git
