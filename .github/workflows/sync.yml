@@ -14,6 +14,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        fetch-depth: 1  # Ensure it's a shallow clone
     
     - name: Set up Git
       run: |
@@ -24,6 +25,9 @@ jobs:
       run: |
         git rm -r --cached .github
         git commit -m "Remove private files and folders before sync"
+
+    - name: Unshallow the repository
+      run: git fetch --unshallow
 
     - name: Add public repo remote
       run: |
