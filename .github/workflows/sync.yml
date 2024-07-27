@@ -24,6 +24,7 @@ jobs:
     - name: Remove sensitive files and folders
       run: |
         git rm -r --cached .github
+        git rm -r --cached assignments_solution
         git commit -m "Remove private files and folders before sync"
 
     - name: Unshallow the repository
