@@ -1,0 +1,6 @@
+{
+    "python.defaultInterpreterPath": "/home/ales/school/urob/classification-private/.pixi/envs/default/bin/python",
+    "[python]": {
+        "editor.formatOnSave": true
+      }
+}
