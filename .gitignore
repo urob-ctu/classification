@@ -9,7 +9,7 @@ data/models/*
 
 .idea/
 *.zip
-
+*.pyc
 *__pycache__*# pixi environments
 .pixi
 *.egg-info
