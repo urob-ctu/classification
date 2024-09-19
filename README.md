@@ -6,10 +6,29 @@ classification - its understanding and implementation.
 
 ## Sections
 
-- [What will you learn?](#what-will-you-learn)
-- [Getting started](#getting-started)
-- [Working on the assignments](#working-on-the-assignments)
-- [How to submit](#how-to-submit)
+- [HW 2 - Classification](#hw-2---classification)
+  - [Sections](#sections)
+  - [Requirements](#requirements)
+  - [What will you learn?](#what-will-you-learn)
+  - [Getting started](#getting-started)
+  - [Working on the Assignments](#working-on-the-assignments)
+  - [How to submit](#how-to-submit)
+
+## Requirements
+
+In your environment, you need to have Python 3.12 installed. The you can run 
+
+```bash
+pip install -r requirements.txt
+```
+
+Then you have to install pytorch on your machine with this url: [Pytorch](https://pytorch.org/get-started/locally/)
+
+Optionally you can install the manim for animation:
+
+```bash
+pip install manim>=0.18.1,<0.19
+```
 
 ## What will you learn?
 

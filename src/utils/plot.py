@@ -1,5 +1,7 @@
 from typing import List, Union
+from dataclasses import dataclass
 
+import torch
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -20,6 +22,7 @@ def plot_cifar10(X: np.ndarray, y: np.ndarray) -> None:
         The function selects 7 random samples from each of the 10 classes in the CIFAR-10 dataset.
         Images are displayed in a grid with the class name shown above the first image of each row.
     """
+    generator = torch.Generator().manual_seed(42)
     classes = [
         "plane",
         "car",
@@ -33,6 +36,9 @@ def plot_cifar10(X: np.ndarray, y: np.ndarray) -> None:
         "truck",
     ]
 
+    # Reshape the images to 32x32 pixels
+    X = X.reshape(-1, 32, 32, 3)
+
     num_classes = len(classes)
     samples_per_class = 7
 
@@ -41,7 +47,9 @@ def plot_cifar10(X: np.ndarray, y: np.ndarray) -> None:
     for label, class_name in enumerate(classes):
         # Find indices of images for the current class
         indices = np.flatnonzero(y == label)
-        indices = np.random.choice(indices, samples_per_class, replace=False)
+        # Randomly sample first 7 indices
+        indices = indices[:samples_per_class]
+        # indices = np.random.choice(indices, samples_per_class, replace=False)
 
         for i, idx in enumerate(indices):
             plt_idx = i * num_classes + label + 1
@@ -53,87 +61,52 @@ def plot_cifar10(X: np.ndarray, y: np.ndarray) -> None:
     plt.show()
 
 
-@dataclass
-class MetricHistory:
-
-
-def plot_training(history: dict, ema: bool = False, alpha: float = 0.1) -> None:
-    """Show the training history of a neural network.
-
-    History structure:
-    {
-        "train": {
-            "loss": {"loss iteration 1": loss value 1, "loss iteration 2": loss value 2, ...},
-            "accuracy": {"accuracy iteration 1": accuracy value 1, "accuracy iteration 2": accuracy value 2, ...}
-        },
-        "val": {
-            "loss": {"loss iteration 1": loss value 1, "loss iteration 2": loss value 2, ...},
-            "accuracy": {"accuracy iteration 1": accuracy value 1, "accuracy iteration 2": accuracy value 2, ...}
-        }
-    }
+def plot_knn_cross_validation(k_to_metrics: dict, label_names: list = None):
+    """Show the results of cross-validation for different k values in KNN.
 
     Args:
-        history (dict): Dictionary containing the training and validation history.
-        ema (bool, optional): Whether to apply exponential moving average to the history. Defaults to False.
-        alpha (float, optional): The alpha value for the exponential moving average. Defaults to 0.1.
+        k_to_metrics (dict): A dictionary containing cross-validation results.
+            - The dictionary should have keys 'accuracy', 'precision', 'recall', and 'f1'.
+            - Each key should map to a dictionary where the keys are k values (as strings) and the values are lists of metric values.
+        label_names (List[str], optional): A list of class labels for the precision, recall, and F1 score metrics. Default is None.
 
     Returns:
         None
-
-    Note:
-        This function creates a plot with two subplots, displaying the loss and accuracy history.
     """
-    train_loss_iters = np.array(list(loss_history["train"].keys()))
-    train_losses = np.array(list(loss_history["train"].values()))
 
-    val_loss_iters = np.array(list(loss_history["val"].keys()))
-    val_losses = np.array(list(loss_history["val"].values()))
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 7))
+    fig.suptitle("Cross-validation on k")
 
-    train_acc_iters = np.array(list(accuracy_history["train"].keys()))
-    train_accs = np.array(list(accuracy_history["train"].values()))
+    # Plot accuracy on the first subplot
+    k_acc = np.array([int(k) for k in k_to_metrics["accuracy"].keys()])
+    acc_means = np.array([np.mean(v) for v in k_to_metrics["accuracy"].values()])
+    acc_stds = np.array([np.std(v) for v in k_to_metrics["accuracy"].values()])
+    _plot_error_bar(ax1, k_acc, acc_means, acc_stds, x_label="k", y_label="Accuracy", title="Accuracy")
 
-    val_acc_iters = np.array(list(accuracy_history["val"].keys()))
-    val_accs = np.array(list(accuracy_history["val"].values()))
-
-    if ema:
-        train_losses = exponential_moving_average(train_losses, alpha)
-        val_losses = exponential_moving_average(val_losses, alpha)
-        train_accs = exponential_moving_average(train_accs, alpha)
-        val_accs = exponential_moving_average(val_accs, alpha)
-
-    X_acc = [train_acc_iters, val_acc_iters]
-    Y_acc = [train_accs, val_accs]
-
-    X_loss = [train_loss_iters, val_loss_iters]
-    Y_loss = [train_losses, val_losses]
-
-    _, axes = plt.subplots(1, 2, figsize=(12, 4))
-
-    _plot_values(
-        axes[0],
-        X_loss,
-        Y_loss,
-        ["Training", "Validation"],
-        "Iterations",
-        "Loss",
-        "Loss History",
+    # Plot precision on the second subplot
+    k_pre = np.array([int(k) for k in k_to_metrics["precision"].keys()])
+    precision_means = np.hstack(
+        [v[..., np.newaxis] for v in k_to_metrics["precision"].values()]
     )
-    _plot_values(
-        axes[1],
-        X_acc,
-        Y_acc,
-        ["Training", "Validation"],
-        "Iterations",
-        "Accuracy",
-        "Accuracy History",
-    )
+    _plot_knn_metric(ax2, k_pre, precision_means, label_names, "Precision")
 
+    # Plot recall on the third subplot
+    k_rec = np.array([int(k) for k in k_to_metrics["recall"].keys()])
+    recall_means = np.hstack(
+        [v[..., np.newaxis] for v in k_to_metrics["recall"].values()]
+    )
+    _plot_knn_metric(ax3, k_rec, recall_means, label_names, "Recall")
+
+    # Plot f1 on the fourth subplot
+    k_f1 = np.array([int(k) for k in k_to_metrics["f1"].keys()])
+    f1_means = np.hstack([v[..., np.newaxis] for v in k_to_metrics["f1"].values()])
+    _plot_knn_metric(ax4, k_f1, f1_means, label_names, "F1")
+
+    plt.tight_layout()
     plt.show()
 
 
-def plot_nn_training(
-    loss_history: dict, accuracy_history: dict, ema: bool = False, alpha: float = 0.1
-) -> None:
+def plot_training(loss_history: dict, accuracy_history: dict, ema: bool = False, alpha: float = 0.1) -> None:
     """Show the training history of a neural network.
 
     Args:
@@ -196,50 +169,22 @@ def plot_nn_training(
     plt.show()
 
 
-def plot_knn_cross_validation(k_to_metrics: dict, label_names: list = None):
-    """Show the results of cross-validation for different k values in KNN.
+def plot_weights_as_templates(weights: torch.Tensor, class_labels: list):
+    w = weights.data
+    w = w.reshape(32, 32, 3, 10)
 
-    Args:
-        k_to_metrics (dict): A dictionary containing cross-validation results.
-            - The dictionary should have keys 'accuracy', 'precision', 'recall', and 'f1'.
-            - Each key should map to a dictionary where the keys are k values (as strings) and the values are lists of metric values.
-        label_names (List[str], optional): A list of class labels for the precision, recall, and F1 score metrics. Default is None.
+    # w_min, w_max = torch.min(w), torch.max(w)
 
-    Returns:
-        None
-    """
-
-    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 7))
-    fig.suptitle("Cross-validation on k")
-
-    # Plot accuracy on the first subplot
-    k_acc = np.array([int(k) for k in k_to_metrics["accuracy"].keys()])
-    acc_means = np.array([np.mean(v) for v in k_to_metrics["accuracy"].values()])
-    acc_stds = np.array([np.std(v) for v in k_to_metrics["accuracy"].values()])
-    _plot_error_bar(ax1, k_acc, acc_means, acc_stds, "Accuracy")
-
-    # Plot precision on the second subplot
-    k_pre = np.array([int(k) for k in k_to_metrics["precision"].keys()])
-    precision_means = np.hstack(
-        [v[..., np.newaxis] for v in k_to_metrics["precision"].values()]
-    )
-    _plot_knn_metric(ax2, k_pre, precision_means, label_names, "Precision")
-
-    # Plot recall on the third subplot
-    k_rec = np.array([int(k) for k in k_to_metrics["recall"].keys()])
-    recall_means = np.hstack(
-        [v[..., np.newaxis] for v in k_to_metrics["recall"].values()]
-    )
-    _plot_knn_metric(ax3, k_rec, recall_means, label_names, "Recall")
-
-    # Plot f1 on the fourth subplot
-    k_f1 = np.array([int(k) for k in k_to_metrics["f1"].keys()])
-    f1_means = np.hstack([v[..., np.newaxis] for v in k_to_metrics["f1"].values()])
-    _plot_knn_metric(ax4, k_f1, f1_means, label_names, "F1")
-
-    plt.tight_layout()
-    plt.show()
-
+    classes = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+    fig, axes = plt.subplots(2, 5, figsize=(10, 4))
+    for c in range(len(classes)):
+        class_vec = w[:, :, :, c].squeeze()
+        w_min, w_max = torch.min(class_vec), torch.max(class_vec)
+        wimg = 255.0 * (w[:, :, :, c].squeeze() - w_min) / (w_max - w_min)
+        wimg = wimg.type(torch.uint8).numpy()
+        axes.flat[c].imshow(wimg)
+        axes.flat[c].axis('off')
+        axes.flat[c].set_title(classes[c])
 
 def _plot_knn_metric(
     ax: plt.Axes,
@@ -263,7 +208,7 @@ def _plot_knn_metric(
     for i in range(metric_means.shape[0]):
         label = label_names[i] if label_names is not None else f"Class {i}"
         ax.plot(k_choices, metric_means[i], linewidth=1.5, marker="o", label=label)
-    _adjust_plot(ax, k_choices, metric_name)
+    _set_plot(ax, k_choices, 'k', metric_name, metric_name, legend=True)
 
 
 def _plot_values(
@@ -301,7 +246,7 @@ def _plot_values(
             ax.plot(X[i], Y[i], linewidth=1.5, marker="o", label=label)
         else:
             ax.plot(X[i], Y[i], linewidth=1.5, label=label)
-    _adjust_plot(ax, X, x_label, y_label, title, legend=legend)
+    _set_plot(ax, X, x_label, y_label, title, legend=legend)
 
 
 def _plot_error_bar(
@@ -330,18 +275,18 @@ def _plot_error_bar(
     ax.errorbar(
         x, y, yerr=stds, linestyle="dotted", linewidth=1.5, marker="o", capsize=4
     )
-    _adjust_plot(ax, x, x_label, y_label, title, legend=False)
+    _set_plot(ax, x, x_label, y_label, title)
 
 
-def _adjust_plot(
+def _set_plot(
     ax: plt.Axes,
     X: Union[np.ndarray, List[np.ndarray]],
     x_label: str,
     y_label: str,
     title: str,
-    legend: bool,
+    legend: bool = False,
 ) -> None:
-    """Adjust plot settings such as labels, title, grid, and legend.
+    """Set plot settings such as labels, title, grid, and legend.
 
     Args:
         ax (plt.Axes): The Matplotlib Axes object to adjust.

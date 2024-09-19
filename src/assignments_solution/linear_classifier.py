@@ -1,48 +1,103 @@
+from copy import deepcopy
+
 import torch
 import numpy as np
 import torch.nn as nn
+from tqdm import tqdm
+from sklearn.metrics import accuracy_score
+
 
 class LinearClassifier:
-    def __init__(self, num_features: int, 
-                 num_classes: int, 
-                 learning_rate: float = 1e-3,
-                 batch_size: int = 100, 
-                 weight_scale: float = 1e-3,
-                 reg: float = 1e-3, 
-                 num_iters: int = 1000, 
-                 verbose: bool = True):
+    def __init__(
+        self,
+        num_features: int,
+        num_classes: int,
+        learning_rate: float = 1e-3,
+        batch_size: int = 100,
+        weight_scale: float = 1e-3,
+        reg: float = 1e-3,
+        num_iters: int = 1000,
+    ):
 
         self.num_classes = num_classes
         self.num_features = num_features
 
         self.reg = reg
-        self.verbose = verbose
         self.num_iters = num_iters
         self.batch_size = batch_size
         self.learning_rate = learning_rate
 
-        # Initialize the weights (Xavier init) and biases (zero init)
-        self.W = nn.Parameter(torch.randn(num_features, num_classes, dtype=torch.float) 
-                              * np.sqrt(2 / (num_features + num_classes))) 
-        self.W.data = self.W.data * weight_scale  # Scale the weights
-        self.b = nn.Parameter(torch.zeros(num_classes, dtype=torch.float))
+        self.params = dict(
+            W=nn.Parameter(
+                torch.randn(num_features, num_classes, dtype=torch.float)
+                * np.sqrt(2 / (num_features + num_classes))
+            ),
+            b=nn.Parameter(torch.zeros(num_classes, dtype=torch.float)),
+        )
 
-    def load_weights(self, W: torch.Tensor, b: torch.Tensor) -> None:
-        """ Load the weights and biases into the model.
+    def train(
+        self,
+        X_train: torch.Tensor,
+        y_train: torch.Tensor,
+        X_val: torch.Tensor,
+        y_val: torch.Tensor,
+    ) -> tuple:
 
-        Args:
-            W: The weights of shape (D, C)
-            b: The biases of shape (C,)
+        # Initialize the best validation accuracy and the best parameters
+        best_val_acc = 0
+        best_params = dict()
 
-        Returns:
-            None
-        """
+        # Initialize the loss and accuracy history
+        loss_history = dict(train=dict(), val=dict())
+        acc_history = dict(train=dict(), val=dict())
 
-        self.W = nn.Parameter(W)
-        self.b = nn.Parameter(b)
+        # Training loop
+        for i in tqdm(range(self.num_iters), desc="Training"):
+
+            # Select a random batch of data
+            batch_indices = torch.randint(0, X_train.shape[0], (self.batch_size,))
+            X_batch = X_train[batch_indices]
+            y_batch = y_train[batch_indices]
+
+            # Zero the gradients
+            self._zero_gradients()
+
+            # Compute the loss and backpropagate
+            train_loss = self.loss(X_batch, y_batch)
+            train_loss.backward(retain_graph=True)
+            self._update_weights()
+
+            # Save the training loss
+            loss_history["train"][i] = train_loss.data
+
+            # Every 500 iterations, compute the validation loss and accuracy
+            if i % 100 == 0 or i == self.num_iters - 1:
+
+                # Compute the validation loss
+                with torch.no_grad():
+                    val_loss = self.loss(X_val, y_val)
+                loss_history["val"][i] = val_loss.data
+
+                # Predict the labels for the training and validation data
+                y_pred_train = self.predict(X_train)
+                y_pred_val = self.predict(X_val)
+
+                # Compute the training and validation accuracy from the predicted labels
+                acc_history["train"][i] = accuracy_score(y_train, y_pred_train)
+                acc_history["val"][i] = accuracy_score(y_val, y_pred_val)
+
+                # If the current validation accuracy is the best so far, save the parameters
+                if acc_history["val"][i] > best_val_acc:
+                    best_val_acc = acc_history["val"][i]
+                    best_params = deepcopy(self.params)
+
+        # Update the parameters with the best ones
+        self.params = best_params
+
+        return loss_history, acc_history
 
     def predict(self, X: torch.Tensor) -> torch.Tensor:
-        """ Predict the labels of the data.
+        """Predict the labels of the data.
 
         Args:
             X: Input data of shape (N, D)
@@ -54,61 +109,8 @@ class LinearClassifier:
         logits = self.forward(X)
         return torch.argmax(logits, axis=1)
 
-    def train(self, X: torch.Tensor, y: torch.Tensor) -> list:
-        loss_history = []
-        for i in range(self.num_iters):
-            batch_indices = torch.randint(0, X.shape[0], (self.batch_size,))
-            X_batch = X[batch_indices]
-            y_batch = y[batch_indices]
-
-            logits = self.forward(X_batch)
-            loss = torch.tensor([0.0], requires_grad=True)
-            self._zero_gradients()
-
-            # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 3.2 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
-            # TODO:                                                             #
-            # Implement one iteration of the training loop. Use the computed    #
-            # scores to compute the Cross Entropy Loss, add the regularization  #
-            # loss of all parameters and store it to the variable `loss`.       #
-            # Then, compute the backward pass and update the weights and biases #
-            # of the model. After that zero out the gradients of the weights    #
-            # and biases.                                                       #
-            #                                                                   #
-            # HINT: - Use only already implemented functions of the Tensor      #
-            #         class.                                                    #
-            #       - Do not forget to add the regularization loss              #
-            #         (defined in Tensor class) of ALL parameters. Use self.reg #
-            #         as the regularization strength.                           #
-            #       - Call step() on the `loss` variable to update              #
-            #         the parameters.                                           #
-            #                                                                   #
-            # Good luck!                                                        #
-            # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
-            # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
-
-
-            loss_fn = torch.nn.CrossEntropyLoss()
-            loss = loss_fn(logits, y_batch)
-            
-            loss = loss + self.reg * torch.sum(self.W ** 2)
-            loss = loss + self.reg * torch.sum(self.b ** 2)
-
-            loss.backward(retain_graph=True)
-            
-            with torch.no_grad():
-                self.W.data = self.W.data - self.learning_rate * self.W.grad
-                self.b.data = self.b.data - self.learning_rate * self.b.grad
-
-            # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
-
-            loss_history.append(loss.data)
-            if self.verbose and i % 100 == 0:
-                print(f"iteration {i} / {self.num_iters}: {loss.data}")
-
-        return loss_history
-
     def forward(self, X: torch.Tensor) -> torch.Tensor:
-        """ Compute the logits of the model.
+        """Compute the logits of the model.
 
         Args:
             X: Input data of shape (N, D)
@@ -119,10 +121,6 @@ class LinearClassifier:
         """
         logits = torch.zeros((X.shape[0], self.num_classes))
 
-        # # If X is a numpy array, convert it to a tensor
-        # if isinstance(X, np.ndarray):
-        #     X = torch.from_numpy(X).float()
-
         # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 3.1 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
         # TODO:                                                             #
         # Implement computation of the logits of the model.                 #
@@ -131,14 +129,33 @@ class LinearClassifier:
         # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
         # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
 
-        logits = X @ self.W + self.b
+        logits = X @ self.params["W"] + self.params["b"]
 
         # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 
         return logits
-    
+
+    def loss(self, X: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
+        loss = torch.tensor([0.0], requires_grad=True)
+
+        loss_fn = torch.nn.CrossEntropyLoss()
+
+        logits = self.forward(X)
+        loss = loss_fn(logits, y)
+
+        for name in self.params.keys():
+            loss = loss + self.reg * torch.sum(self.params[name] ** 2)
+
+        return loss
+
     def _zero_gradients(self):
-        if self.W.grad is not None:
-            self.W.grad.zero_()
-        if self.b.grad is not None:
-            self.b.grad.zero_()
+        for name in self.params.keys():
+            if self.params[name].grad is not None:
+                self.params[name].grad.zero_()
+
+    def _update_weights(self):
+        with torch.no_grad():
+            for name in self.params.keys():
+                self.params[name].data = (
+                    self.params[name].data - self.learning_rate * self.params[name].grad
+                )

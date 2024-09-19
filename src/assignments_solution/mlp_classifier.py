@@ -6,9 +6,6 @@ import numpy as np
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score
 
-from utils.engine import Tensor
-
-
 class MLPClassifier:
     def __init__(self, input_size: int, 
                  hidden_dim_1: int, 
@@ -47,6 +44,121 @@ class MLPClassifier:
         elif activation == 'tanh':
             self.activation_func = nn.Tanh()
 
+
+    def train(self, 
+              X_train: torch.Tensor, 
+              y_train: torch.Tensor, 
+              X_val: torch.Tensor, 
+              y_val: torch.Tensor) -> tuple:
+        
+        # Initialize the best validation accuracy and the best parameters
+        best_val_acc = 0
+        best_params = dict()
+
+        # Initialize the loss and accuracy history
+        loss_history = dict(train=dict(), val=dict())
+        acc_history = dict(train=dict(), val=dict())
+
+        # Training loop
+        for i in tqdm(range(self.num_iters), desc="Training"):
+            
+            # Select a random batch of data
+            batch_indices = torch.randint(0, X_train.shape[0], (self.batch_size,))
+            X_batch = X_train[batch_indices]
+            y_batch = y_train[batch_indices]
+
+            # Zero the gradients
+            self._zero_gradients()
+
+            # Compute the loss and backpropagate    
+            train_loss = self.loss(X_batch, y_batch)
+            train_loss.backward(retain_graph=True)
+            self._update_weights()
+
+            # Save the training loss
+            loss_history["train"][i] = train_loss.data
+            
+            # Every 500 iterations, compute the validation loss and accuracy
+            if i % 500 == 0 or i == self.num_iters - 1:
+
+                # Compute the validation loss
+                with torch.no_grad():
+                    val_loss = self.loss(X_val, y_val)
+                loss_history["val"][i] = val_loss.data
+
+                # Predict the labels for the training and validation data
+                y_pred_train = self.predict(X_train)
+                y_pred_val = self.predict(X_val)
+                
+                # Compute the training and validation accuracy from the predicted labels
+                acc_history["train"][i] = accuracy_score(y_train, y_pred_train)
+                acc_history["val"][i] = accuracy_score(y_val, y_pred_val)
+
+                # If the current validation accuracy is the best so far, save the parameters
+                if acc_history["val"][i] > best_val_acc:
+                    best_val_acc = acc_history["val"][i]
+                    best_params = deepcopy(self.params)
+
+        # Update the parameters with the best ones
+        self.params = best_params
+
+        return loss_history, acc_history
+
+    def forward(self, X: torch.Tensor) -> torch.Tensor:
+        """Forward pass of the neural network.
+
+        Args:
+            X (Union[np.ndarray, Tensor]): Input data of shape (N, D)
+
+        Returns:
+            Tensor: Output data of shape (N, C)
+        """
+
+        out = self._first_layer(X)
+        out = self._second_layer(out)
+        logits = self._output_layer(out)
+
+        return logits
+
+    def predict(self, X: torch.Tensor) -> np.ndarray:
+        """Predict the class labels for the provided data.
+
+        Args:
+            X (np.ndarray): Input data of shape (N, D)
+            zero_grad (bool, optional): Whether to zero the gradients after
+                prediction. Defaults to False.
+
+        Returns:
+            np.ndarray: Predicted class labels of shape (N,)
+        """
+
+        logits = self.forward(X)
+        y_pred = torch.argmax(logits, axis=1)
+
+        return y_pred
+
+    def loss(self, X: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
+        """Compute the loss of the neural network.
+
+        Args:
+            X (np.ndarray): Input data of shape (N, D)
+            y (np.ndarray): Labels of shape (N,)
+            zero_grad (bool, optional): Whether to zero the gradients after
+                computing the loss. Defaults to False.
+
+        Returns:
+            torch.Tensor: Loss of the neural network
+        """
+
+        loss_fn = torch.nn.CrossEntropyLoss()
+        
+        logits = self.forward(X)
+        loss = loss_fn(logits, y)
+
+        for name in self.params.keys():
+            loss = loss + self.reg * torch.sum(self.params[name] ** 2)
+
+        return loss
 
     def _first_layer(self, X: torch.Tensor) -> torch.Tensor:
         """Forward pass of the first layer of the MLP.
@@ -114,123 +226,6 @@ class MLPClassifier:
         # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 
         return out
-
-    def forward(self, X: torch.Tensor) -> torch.Tensor:
-        """Forward pass of the neural network.
-
-        Args:
-            X (Union[np.ndarray, Tensor]): Input data of shape (N, D)
-
-        Returns:
-            Tensor: Output data of shape (N, C)
-        """
-
-        out = self._first_layer(X)
-        out = self._second_layer(out)
-        logits = self._output_layer(out)
-
-        return logits
-
-    def predict(self, X: torch.Tensor) -> np.ndarray:
-        """Predict the class labels for the provided data.
-
-        Args:
-            X (np.ndarray): Input data of shape (N, D)
-            zero_grad (bool, optional): Whether to zero the gradients after
-                prediction. Defaults to False.
-
-        Returns:
-            np.ndarray: Predicted class labels of shape (N,)
-        """
-
-        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 5.5 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
-        # TODO:                                                             #
-        # Implement the predict function.                                   #
-        #                                                                   #
-        # Hint: Remember that the prediction is the class with the highest  #
-        # score - argmax of the score vector.                               #
-        #                                                                   #
-        # Good luck!                                                        #
-        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
-        # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
-
-        logits = self.forward(X)
-        y_pred = torch.argmax(logits, axis=1)
-
-        # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
-
-        return y_pred
-
-    def loss(self, X: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-        """Compute the loss of the neural network.
-
-        Args:
-            X (np.ndarray): Input data of shape (N, D)
-            y (np.ndarray): Labels of shape (N,)
-            zero_grad (bool, optional): Whether to zero the gradients after
-                computing the loss. Defaults to False.
-
-        Returns:
-            Tensor: Loss of the neural network
-        """
-
-        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 5.6 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
-        # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
-        loss_fn = torch.nn.CrossEntropyLoss()
-        
-        logits = self.forward(X)
-        loss = loss_fn(logits, y)
-
-        for name in self.params.keys():
-            loss = loss + self.reg * torch.sum(self.params[name] ** 2)
-
-        # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
-
-        return loss
-
-    def train(self, X_train: torch.Tensor, y_train: torch.Tensor, 
-              X_val: torch.Tensor, y_val: torch.Tensor) -> tuple:
-        best_val_acc = 0
-        best_params = dict()
-        loss_history = dict(train=dict(), val=dict())
-        acc_history = dict(train=dict(), val=dict())
-
-        for i in tqdm(range(self.num_iters), desc="Training"):
-            batch_indices = torch.randint(0, X_train.shape[0], (self.batch_size,))
-            X_batch = X_train[batch_indices]
-            y_batch = y_train[batch_indices]
-
-            train_loss = None
-            self._zero_gradients()
-
-            # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 5.7 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
-            # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
-            
-            train_loss = self.loss(X_batch, y_batch)
-            train_loss.backward(retain_graph=True)
-            self._update_weights()
-
-            # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
-
-            loss_history["train"][i] = train_loss.data
-
-            if i % 500 == 0:
-                with torch.no_grad():
-                    val_loss = self.loss(X_val, y_val)
-                loss_history["val"][i] = val_loss.data
-
-                y_pred_train = self.predict(X_train)
-                y_pred_val = self.predict(X_val)
-                acc_history["train"][i] = accuracy_score(y_train, y_pred_train)
-                acc_history["val"][i] = accuracy_score(y_val, y_pred_val)
-
-                if acc_history["val"][i] > best_val_acc:
-                    best_val_acc = acc_history["val"][i]
-                    best_params = deepcopy(self.params)
-
-        self.params = best_params
-
-        return loss_history, acc_history
     
     def _zero_gradients(self):
         for name in self.params.keys():

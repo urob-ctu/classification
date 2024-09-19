@@ -1,0 +1,7 @@
+# manim>=0.18.1,<0.19
+numpy>=1.26.4,<2
+matplotlib>=3.9.1,<4
+jupyterlab>=4.2.4,<5
+scikit-learn>=1.5.1,<2
+plotly>=5.23.0,<6
+jupyter>=1.0.0,<2

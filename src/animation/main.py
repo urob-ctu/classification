@@ -208,8 +208,8 @@ class NNTransform(MovingCameraScene):
                   FadeOut(points),
                   FadeOut(foreground_plane), run_time=2)
 
-
-if __name__ == '__main__':
+def create_animation():
+    ROOT_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..")
     parser = argparse.ArgumentParser(description="Create an animation of a neural network transformation.")
     parser.add_argument("--dataset", "-d", type=str, default="circles",
                         help="Dataset and corresponding model to use.",
@@ -234,3 +234,7 @@ if __name__ == '__main__':
     # Remove media directory if it already exists
     if os.path.isdir(media_dir):
         shutil.rmtree(media_dir)
+
+
+if __name__ == '__main__':
+    create_animation()
