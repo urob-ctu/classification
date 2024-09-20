@@ -205,6 +205,8 @@ def plot_weights_as_templates(weights: torch.Tensor, class_labels: list):
         axes.flat[c].axis("off")
         axes.flat[c].set_title(classes[c])
 
+    plt.show()
+
 
 def _plot_knn_metric(
     ax: plt.Axes,
