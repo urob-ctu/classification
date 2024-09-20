@@ -13,3 +13,5 @@ data/models/*
 *__pycache__*
 .pixi
 *.egg-info
+
+.vscode/
