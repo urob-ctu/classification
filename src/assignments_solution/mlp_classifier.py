@@ -6,51 +6,63 @@ import numpy as np
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score
 
+
 class MLPClassifier:
-    def __init__(self, input_size: int, 
-                 hidden_dim_1: int, 
-                 hidden_dim_2: int,
-                 output_size: int, 
-                 activation: str = 'relu',
-                 learning_rate: float = 1e-3, 
-                 reg: float = 1e-6, 
-                 batch_size: int = 100,
-                 num_iters: int = 1000, 
-                 verbose: bool = False):
+    def __init__(
+        self,
+        num_features: int,
+        hidden_dim_1: int,
+        hidden_dim_2: int,
+        num_classes: int,
+        activation: str = "relu",
+        learning_rate: float = 1e-3,
+        reg: float = 1e-6,
+        batch_size: int = 100,
+        num_iters: int = 1000,
+    ):
 
         self.params = dict(
-            W1=nn.Parameter(torch.randn(input_size, hidden_dim_1, dtype=torch.float) * 1),
+            W1=nn.Parameter(
+                torch.randn(num_features, hidden_dim_1, dtype=torch.float)
+                * np.sqrt(2 / (num_features + num_classes))
+            ),
             b1=nn.Parameter(torch.zeros(hidden_dim_1, dtype=torch.float)),
-            W2=nn.Parameter(torch.randn(hidden_dim_1, hidden_dim_2, dtype=torch.float) * 1),
+            W2=nn.Parameter(
+                torch.randn(hidden_dim_1, hidden_dim_2, dtype=torch.float)
+                * np.sqrt(2 / (num_features + num_classes))
+            ),
             b2=nn.Parameter(torch.zeros(hidden_dim_2, dtype=torch.float)),
-            W3=nn.Parameter(torch.randn(hidden_dim_2, output_size, dtype=torch.float) * 1),
-            b3=nn.Parameter(torch.zeros(output_size, dtype=torch.float))
+            W3=nn.Parameter(
+                torch.randn(hidden_dim_2, num_classes, dtype=torch.float)
+                * np.sqrt(2 / (num_features + num_classes))
+            ),
+            b3=nn.Parameter(torch.zeros(num_classes, dtype=torch.float)),
         )
 
         self.reg = reg
-        self.verbose = verbose
         self.num_iters = num_iters
         self.activation = activation
         self.batch_size = batch_size
-        self.num_classes = output_size
+        self.num_classes = num_classes
         self.learning_rate = learning_rate
 
         self.activation_func = None
 
-        if activation == 'relu':
+        if activation == "relu":
             self.activation_func = nn.ReLU()
-        elif activation == 'sigmoid':
+        elif activation == "sigmoid":
             self.activation_func = nn.Sigmoid()
-        elif activation == 'tanh':
+        elif activation == "tanh":
             self.activation_func = nn.Tanh()
 
+    def train(
+        self,
+        X_train: torch.Tensor,
+        y_train: torch.Tensor,
+        X_val: torch.Tensor,
+        y_val: torch.Tensor,
+    ) -> tuple:
 
-    def train(self, 
-              X_train: torch.Tensor, 
-              y_train: torch.Tensor, 
-              X_val: torch.Tensor, 
-              y_val: torch.Tensor) -> tuple:
-        
         # Initialize the best validation accuracy and the best parameters
         best_val_acc = 0
         best_params = dict()
@@ -61,7 +73,7 @@ class MLPClassifier:
 
         # Training loop
         for i in tqdm(range(self.num_iters), desc="Training"):
-            
+
             # Select a random batch of data
             batch_indices = torch.randint(0, X_train.shape[0], (self.batch_size,))
             X_batch = X_train[batch_indices]
@@ -70,14 +82,14 @@ class MLPClassifier:
             # Zero the gradients
             self._zero_gradients()
 
-            # Compute the loss and backpropagate    
+            # Compute the loss and backpropagate
             train_loss = self.loss(X_batch, y_batch)
             train_loss.backward(retain_graph=True)
             self._update_weights()
 
             # Save the training loss
             loss_history["train"][i] = train_loss.data
-            
+
             # Every 500 iterations, compute the validation loss and accuracy
             if i % 500 == 0 or i == self.num_iters - 1:
 
@@ -89,7 +101,7 @@ class MLPClassifier:
                 # Predict the labels for the training and validation data
                 y_pred_train = self.predict(X_train)
                 y_pred_val = self.predict(X_val)
-                
+
                 # Compute the training and validation accuracy from the predicted labels
                 acc_history["train"][i] = accuracy_score(y_train, y_pred_train)
                 acc_history["val"][i] = accuracy_score(y_val, y_pred_val)
@@ -105,152 +117,120 @@ class MLPClassifier:
         return loss_history, acc_history
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
-        """Forward pass of the neural network.
+        """Compute the logits of the model.
 
         Args:
-            X (Union[np.ndarray, Tensor]): Input data of shape (N, D)
+            X: Input data of shape (N, D)
 
         Returns:
-            Tensor: Output data of shape (N, C)
+            logits: The logits of the model. Tensor of shape (N, C)
+
         """
 
-        out = self._first_layer(X)
-        out = self._second_layer(out)
-        logits = self._output_layer(out)
+        logits = torch.zeros((X.shape[0], self.num_classes))
+
+        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 4.1 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
+        # TODO:                                                             #
+        # Implement computation of the logits of the model.                 #
+        #                                                                   #
+        # Good luck!                                                        #
+        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
+        # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
+
+        out = X @ self.params["W1"] + self.params["b1"]
+        out = self.activation_func(out)
+        out = out @ self.params["W2"] + self.params["b2"]
+        out = self.activation_func(out)
+        logits = out @ self.params["W3"] + self.params["b3"]
+
+        # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 
         return logits
 
-    def predict(self, X: torch.Tensor) -> np.ndarray:
-        """Predict the class labels for the provided data.
+    def predict(self, X: torch.Tensor) -> torch.Tensor:
+        """Predict the labels of the data.
 
         Args:
-            X (np.ndarray): Input data of shape (N, D)
-            zero_grad (bool, optional): Whether to zero the gradients after
-                prediction. Defaults to False.
+            X (torch.Tensor): Input data of shape (N, D)
 
         Returns:
-            np.ndarray: Predicted class labels of shape (N,)
+            y_pred (torch.Tensor): The predicted labels of the data. Array of shape (N,)
         """
 
+        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 4.2 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
+        # TODO:                                                             #
+        # Implement the prediction function of the model.                   #
+        #                                                                   #
+        # Good luck!                                                        #
+        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
+        # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
+
         logits = self.forward(X)
-        y_pred = torch.argmax(logits, axis=1)
+        y_pred = torch.argmax(logits, dim=1)
+
+        # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 
         return y_pred
 
     def loss(self, X: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-        """Compute the loss of the neural network.
+        """Compute the loss of the model.
 
         Args:
-            X (np.ndarray): Input data of shape (N, D)
-            y (np.ndarray): Labels of shape (N,)
-            zero_grad (bool, optional): Whether to zero the gradients after
-                computing the loss. Defaults to False.
+            X (torch.Tensor): Input data of shape (N, D)
+            y (torch.Tensor): Labels of shape (N,)
 
         Returns:
-            torch.Tensor: Loss of the neural network
+            torch.Tensor: The loss of the model
         """
 
+        loss = torch.tensor([0.0], requires_grad=True)
+
+        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 4.3 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
+        # TODO:                                                             #
+        # Implement the loss function of the model. The loss function       #
+        # should be the cross-entropy loss with L2 regularization.          #
+        #                                                                   #
+        # HINT: You may find torch.nn.CrossEntropyLoss() useful.            #
+        #                                                                   #
+        # Good luck!                                                        #
+        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
+        # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
+
         loss_fn = torch.nn.CrossEntropyLoss()
-        
+
         logits = self.forward(X)
         loss = loss_fn(logits, y)
 
         for name in self.params.keys():
             loss = loss + self.reg * torch.sum(self.params[name] ** 2)
 
+        # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
+
         return loss
 
-    def _first_layer(self, X: torch.Tensor) -> torch.Tensor:
-        """Forward pass of the first layer of the MLP.
+    def _update_weights(self):
+        """Update the weights of the model using the gradient descent."""
 
-        Args:
-            X: Input data of shape (N, D)
-
-        Returns:
-            out: Output data of shape (N, H1)
-        """
-
-        out = None
-
-        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 5.1 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
+        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 3.4 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
+        # TODO:                                                             #
+        # Implement the loss function of the model. The loss function       #
+        # should be the cross-entropy loss with L2 regularization.          #
+        #                                                                   #
+        # HINT: You may find torch.nn.CrossEntropyLoss() useful.            #
+        #                                                                   #
+        # Good luck!                                                        #
+        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
         # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
 
-        out = X @ self.params['W1'] + self.params['b1']
-        out = self.activation_func(out)
+        with torch.no_grad():
+            for name in self.params.keys():
+                self.params[name].data = (
+                    self.params[name].data - self.learning_rate * self.params[name].grad
+                )
 
         # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 
-        return out
-
-    def _second_layer(self, X: torch.Tensor) -> torch.Tensor:
-        """Forward pass of the second layer of the MLP.
-
-        Args:
-            X: Input data of shape (N, H1)
-
-        Returns:
-            out: Output data of shape (N, H2)
-
-        """
-
-        out = None
-
-        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 5.2 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
-        # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
-
-        out = X @ self.params['W2'] + self.params['b2']
-        out = self.activation_func(out)
-
-        # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
-
-        return out
-
-    def _output_layer(self, X: torch.Tensor) -> torch.Tensor:
-        """Forward pass of the third layer of the MLP.
-
-        Args:
-            X: Input data of shape (N, H2)
-
-        Returns:
-            out: Output data of shape (N, C)
-
-        """
-
-        out = None
-
-        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 5.3 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
-        # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
-
-        out = X @ self.params['W3'] + self.params['b3']
-
-        # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
-
-        return out
-    
     def _zero_gradients(self):
         for name in self.params.keys():
             if self.params[name].grad is not None:
                 self.params[name].grad.zero_()
-
-    def _update_weights(self):
-        with torch.no_grad():
-            for name in self.params.keys():
-                self.params[name].data = self.params[name].data - self.learning_rate * self.params[name].grad
-
-    # ================ Methods for the animation =================
-
-    def transform(self, X: np.ndarray) -> np.ndarray:
-        X = Tensor(X)
-        out = self._first_layer(X)
-        out = self._second_layer(out)
-        return out.data
-
-    def transform_point(self, x: np.ndarray) -> np.ndarray:
-        x = x[:2][np.newaxis, :]
-        out = self.transform(x)
-        return np.array([out[0][0], out[0][1], 0])
-
-    def predict_transformed(self, X: np.ndarray) -> np.ndarray:
-        X = Tensor(X)
-        scores = self._output_layer(X)
-        return np.argmax(scores.data, axis=1)

@@ -1,13 +1,12 @@
-import numpy as np
-from utils import load_module
+import torch
+import torch.nn as nn
+
+from assignments_solution import LinearClassifier
 
 
 def test_assignment_3_1(
-    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
+    verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
-    # Dynamically import the module
-    module = load_module(src_dir, "linear_classifier")
-    LinearClassifier = module.LinearClassifier
 
     ret = {"points": 0, "message": "", "max_points": 1}
 
@@ -15,33 +14,35 @@ def test_assignment_3_1(
     num_features = 5
     num_samples = 100
 
-    np.random.seed(seed)
+    torch.random.manual_seed(seed)
 
-    W = np.random.randn(num_features, num_classes)
-    b = np.random.randn(num_classes)
-    X = np.random.randn(num_samples, num_features)
+    params = dict(
+        W=nn.Parameter(torch.randn(num_features, num_classes, dtype=torch.float)),
+        b=nn.Parameter(torch.randn(num_classes, dtype=torch.float)),
+    )
+    X = torch.randn(num_samples, num_features)
 
     try:
         model = LinearClassifier(num_classes, num_features)
-        model.load_weights(W, b)
-        scores = model.compute_scores(X)
+        model.params = params
+        logits = model.forward(X)
     except Exception as e:
         ret["message"] = f"\tFAILED! \n\t{e}"
         return ret
 
     if generate:
-        np.save(verification_file, scores.data)
+        torch.save(logits, verification_file)
         print(f"Successfully generated '{verification_file}'!")
     else:
-        expected_scores = np.load(verification_file)
+        expected_logits = torch.load(verification_file, weights_only=True)
 
         try:
-            if np.allclose(scores.data, expected_scores):
+            if torch.allclose(logits, expected_logits):
                 ret["message"] = f"PASSED!"
                 ret["points"] = ret["max_points"]
             else:
-                difference = np.sum(np.abs(scores.data - expected_scores))
-                ret["message"] = f"\tFAILED! \n\tDifference of scores: {difference}"
+                difference = torch.sum(torch.abs(logits - expected_logits))
+                ret["message"] = f"\tFAILED! \n\tDifference of logits: {difference}"
         except Exception as e:
             ret["message"] = f"\tFAILED! \n\t{e}"
 
@@ -49,11 +50,8 @@ def test_assignment_3_1(
 
 
 def test_assignment_3_2(
-    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
+    verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
-    # Dynamically import the module
-    module = load_module(src_dir, "linear_classifier")
-    LinearClassifier = module.LinearClassifier
 
     ret = {"points": 0, "message": "", "max_points": 1}
 
@@ -61,58 +59,143 @@ def test_assignment_3_2(
     num_features = 5
     num_samples = 100
 
-    np.random.seed(seed)
+    torch.random.manual_seed(seed)
 
-    W = np.random.randn(num_features, num_classes)
-    b = np.random.randn(num_classes)
-
-    X = np.random.randn(num_samples, num_features)
-    y = np.random.randint(num_classes, size=num_samples)
+    params = dict(
+        W=nn.Parameter(torch.randn(num_features, num_classes, dtype=torch.float)),
+        b=nn.Parameter(torch.randn(num_classes, dtype=torch.float)),
+    )
+    X = torch.randn(num_samples, num_features)
 
     try:
-        model = LinearClassifier(
-            num_classes,
-            num_features,
-            learning_rate=1e-3,
-            batch_size=num_samples,
-            num_iters=1,
-            verbose=False,
-        )
-        model.load_weights(W, b)
-        loss_history = model.train(X, y)
+        model = LinearClassifier(num_classes, num_features)
+        model.params = params
+        y_pred = model.predict(X)
     except Exception as e:
         ret["message"] = f"\tFAILED! \n\t{e}"
         return ret
 
     if generate:
-        np.savez(
-            verification_file, loss=loss_history[-1], W=model.W.data, b=model.b.data
-        )
+        torch.save(y_pred, verification_file)
         print(f"Successfully generated '{verification_file}'!")
     else:
-        expected_values = np.load(verification_file)
+        expected_logits = torch.load(verification_file, weights_only=True)
 
         try:
-            exp_loss = expected_values["loss"]
-            exp_W = expected_values["W"]
-            exp_b = expected_values["b"]
-
-            loss_diff = np.abs(loss_history[-1] - exp_loss)
-            W_diff = np.sum(np.abs(model.W.data - exp_W))
-            b_diff = np.sum(np.abs(model.b.data - exp_b))
-
-            loss_passed = loss_diff < 1e-5
-            W_passed = np.allclose(model.W.data, exp_W)
-            b_passed = np.allclose(model.b.data, exp_b)
-
-            if loss_passed and W_passed and b_passed:
+            if torch.allclose(y_pred, expected_logits):
                 ret["message"] = f"PASSED!"
                 ret["points"] = ret["max_points"]
             else:
-                ret["message"] = (
-                    f"\tFAILED! \n\tLoss difference: {loss_diff} \n\t"
-                    f"W difference: {W_diff} \n\tb difference: {b_diff}"
-                )
+                difference = torch.sum(torch.abs(y_pred - expected_logits))
+                ret[
+                    "message"
+                ] = f"\tFAILED! \n\tDifference of predicted labels: {difference}"
+        except Exception as e:
+            ret["message"] = f"\tFAILED! \n\t{e}"
+
+    return ret
+
+
+def test_assignment_3_3(
+    verification_file: str, seed: int = 69, generate: bool = False
+) -> dict:
+
+    ret = {"points": 0, "message": "", "max_points": 1}
+
+    num_classes = 10
+    num_features = 5
+    num_samples = 100
+
+    torch.random.manual_seed(seed)
+
+    params = dict(
+        W=nn.Parameter(torch.randn(num_features, num_classes, dtype=torch.float)),
+        b=nn.Parameter(torch.randn(num_classes, dtype=torch.float)),
+    )
+    X = torch.randn(num_samples, num_features)
+    y = torch.randint(0, num_classes, (num_samples,))
+
+    try:
+        model = LinearClassifier(num_classes, num_features)
+        model.params = params
+        loss = model.loss(X, y)
+    except Exception as e:
+        ret["message"] = f"\tFAILED! \n\t{e}"
+        return ret
+
+    if generate:
+        torch.save(loss, verification_file)
+        print(f"Successfully generated '{verification_file}'!")
+    else:
+        expected_loss = torch.load(verification_file, weights_only=True)
+
+        try:
+            if torch.allclose(loss, expected_loss):
+                ret["message"] = f"PASSED!"
+                ret["points"] = ret["max_points"]
+            else:
+                difference = torch.sum(torch.abs(loss - expected_loss))
+                ret["message"] = f"\tFAILED! \n\tLoss difference: {difference}"
+        except Exception as e:
+            ret["message"] = f"\tFAILED! \n\t{e}"
+
+    return ret
+
+
+def test_assignment_3_4(
+    verification_file: str, seed: int = 69, generate: bool = False
+) -> dict:
+
+    ret = {"points": 0, "message": "", "max_points": 1}
+
+    num_classes = 10
+    num_features = 5
+    num_samples = 100
+
+    torch.random.manual_seed(seed)
+
+    params = dict(
+        W=nn.Parameter(torch.randn(num_features, num_classes, dtype=torch.float)),
+        b=nn.Parameter(torch.randn(num_classes, dtype=torch.float)),
+    )
+    X = torch.randn(num_samples, num_features)
+    y = torch.randint(0, num_classes, (num_samples,))
+
+    try:
+        model = LinearClassifier(num_classes, num_features)
+        model.params = params
+        model._zero_gradients()
+        loss = model.loss(X, y)
+        loss.backward(retain_graph=True)
+        model._update_weights()
+
+    except Exception as e:
+        ret["message"] = f"\tFAILED! \n\t{e}"
+        return ret
+
+    if generate:
+        torch.save(model.params, verification_file)
+        print(f"Successfully generated '{verification_file}'!")
+    else:
+        expected_params = torch.load(verification_file, weights_only=True)
+
+        try:
+            pred_values = model.params.values()
+            expected_values = expected_params.values()
+            differences = [
+                torch.sum(torch.abs(m - exp_m))
+                for m, exp_m in zip(pred_values, expected_values)
+            ]
+            differences = torch.stack(differences)
+            param_difference = torch.sum(differences)
+
+            if param_difference < 1e-5:
+                ret["message"] = f"PASSED!"
+                ret["points"] = ret["max_points"]
+            else:
+                ret[
+                    "message"
+                ] = f"\tFAILED! \n\tParameter difference: {param_difference}"
         except Exception as e:
             ret["message"] = f"\tFAILED! \n\t{e}"
 

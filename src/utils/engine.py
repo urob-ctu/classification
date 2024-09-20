@@ -1,7 +1,7 @@
 import numpy as np
 
 # configure numpy to render floats with 3 decimal places
-np.set_printoptions(formatter={'float': "{: 0.3f}".format})
+np.set_printoptions(formatter={"float": "{: 0.3f}".format})
 
 
 def reshape_gradient(gradient: np.ndarray, target_shape: tuple) -> np.ndarray:
@@ -64,7 +64,9 @@ class Tensor:
         req_grad (bool): Indicates if gradient updates are to be performed for this tensor.
     """
 
-    def __init__(self, data, _parent=(), _op='', label='', req_grad=False, is_weight=False):
+    def __init__(
+        self, data, _parent=(), _op="", label="", req_grad=False, is_weight=False
+    ):
         self.data = np.array(data)
         self.label = label
         self.grad = np.zeros(self.data.shape)
@@ -78,9 +80,9 @@ class Tensor:
 
     # +++++++++++++++++ Basic Operations +++++++++++++++++
 
-    def __add__(self, other) -> 'Tensor':
+    def __add__(self, other) -> "Tensor":
         other = other if isinstance(other, Tensor) else Tensor(other)
-        out = Tensor(np.add(self.data, other.data), (self, other), '+')
+        out = Tensor(np.add(self.data, other.data), (self, other), "+")
 
         def _backward():
             self.grad += reshape_gradient(out.grad, self.data.shape)
@@ -89,9 +91,9 @@ class Tensor:
         out._backward = _backward
         return out
 
-    def __mul__(self, other) -> 'Tensor':
+    def __mul__(self, other) -> "Tensor":
         other = other if isinstance(other, Tensor) else Tensor(other)
-        out = Tensor(np.multiply(self.data, other.data), (self, other), '*')
+        out = Tensor(np.multiply(self.data, other.data), (self, other), "*")
 
         def _backward():
             self.grad += reshape_gradient(other.data * out.grad, self.data.shape)
@@ -100,7 +102,7 @@ class Tensor:
         out._backward = _backward
         return out
 
-    def matmul(self, other) -> 'Tensor':
+    def matmul(self, other) -> "Tensor":
         if type(self) == type(other):
             pass
         elif isinstance(other, Tensor):
@@ -108,7 +110,7 @@ class Tensor:
         else:
             # print(f"The other is not a Tensor! {type(other)}")
             other = Tensor(other)
-        out = Tensor(np.matmul(self.data, other.data), (self, other), 'matmul')
+        out = Tensor(np.matmul(self.data, other.data), (self, other), "matmul")
 
         def _backward():
             self.grad += np.matmul(out.grad, other.data.T)
@@ -117,9 +119,9 @@ class Tensor:
         out._backward = _backward
         return out
 
-    def __pow__(self, other) -> 'Tensor':
+    def __pow__(self, other) -> "Tensor":
         assert isinstance(other, (int, float))
-        out = Tensor(np.float_power(self.data, other), (self,), f'**{other}')
+        out = Tensor(np.float_power(self.data, other), (self,), f"**{other}")
 
         def _backward():
             self.grad += other * np.float_power(self.data, other - 1) * out.grad
@@ -128,37 +130,37 @@ class Tensor:
 
         return out
 
-    def __sub__(self, other) -> 'Tensor':
+    def __sub__(self, other) -> "Tensor":
         return self + (-other)
 
-    def __matmul__(self, other) -> 'Tensor':
+    def __matmul__(self, other) -> "Tensor":
         return self.matmul(other)
 
-    def __neg__(self) -> 'Tensor':
+    def __neg__(self) -> "Tensor":
         return self * -1
 
-    def __truediv__(self, other) -> 'Tensor':
+    def __truediv__(self, other) -> "Tensor":
         return self * (other ** -1)
 
-    def __radd__(self, other) -> 'Tensor':
+    def __radd__(self, other) -> "Tensor":
         return self + other
 
-    def __rsub__(self, other) -> 'Tensor':
+    def __rsub__(self, other) -> "Tensor":
         return (-self) + other
 
-    def __rmul__(self, other) -> 'Tensor':
+    def __rmul__(self, other) -> "Tensor":
         return self * other
 
-    def __rtruediv__(self, other) -> 'Tensor':
+    def __rtruediv__(self, other) -> "Tensor":
         return other * (self ** -1)
 
-    def __rpow__(self, other) -> 'Tensor':
+    def __rpow__(self, other) -> "Tensor":
         return other ** self
 
     # +++++++++++++++++ Basic Functions +++++++++++++++++
 
-    def sin(self) -> 'Tensor':
-        out = Tensor(np.sin(self.data), (self,), 'sin')
+    def sin(self) -> "Tensor":
+        out = Tensor(np.sin(self.data), (self,), "sin")
 
         def _backward():
             self.grad += np.cos(self.data) * out.grad
@@ -167,8 +169,8 @@ class Tensor:
 
         return out
 
-    def cos(self) -> 'Tensor':
-        out = Tensor(np.cos(self.data), (self,), 'cos')
+    def cos(self) -> "Tensor":
+        out = Tensor(np.cos(self.data), (self,), "cos")
 
         def _backward():
             self.grad -= np.sin(self.data) * out.grad
@@ -177,8 +179,8 @@ class Tensor:
 
         return out
 
-    def exp(self) -> 'Tensor':
-        out = Tensor(np.exp(self.data), (self,), 'exp')
+    def exp(self) -> "Tensor":
+        out = Tensor(np.exp(self.data), (self,), "exp")
 
         def _backward():
             self.grad += out.data * out.grad
@@ -187,8 +189,8 @@ class Tensor:
 
         return out
 
-    def log(self) -> 'Tensor':
-        out = Tensor(np.log(self.data), (self,), 'log')
+    def log(self) -> "Tensor":
+        out = Tensor(np.log(self.data), (self,), "log")
 
         def _backward():
             self.grad += (1.0 / self.data) * out.grad
@@ -199,8 +201,8 @@ class Tensor:
 
     # +++++++++++++++++ Other Functions +++++++++++++++++
 
-    def sum(self, axis=None) -> 'Tensor':
-        out = Tensor(np.sum(self.data, axis=axis), (self,), 'sum')
+    def sum(self, axis=None) -> "Tensor":
+        out = Tensor(np.sum(self.data, axis=axis), (self,), "sum")
 
         def _backward():
             self.grad += np.ones(self.data.shape) * out.grad
@@ -209,9 +211,11 @@ class Tensor:
 
         return out
 
-    def stack(self, other, axis=0) -> 'Tensor':
+    def stack(self, other, axis=0) -> "Tensor":
         other = other if isinstance(other, Tensor) else Tensor(other)
-        out = Tensor(np.stack((self.data, other.data), axis=axis), (self, other), 'stack')
+        out = Tensor(
+            np.stack((self.data, other.data), axis=axis), (self, other), "stack"
+        )
 
         def _backward():
             self.grad += out.grad[0]
@@ -221,8 +225,8 @@ class Tensor:
 
         return out
 
-    def T(self) -> 'Tensor':
-        out = Tensor(self.data.T, (self,), 'T')
+    def T(self) -> "Tensor":
+        out = Tensor(self.data.T, (self,), "T")
 
         def _backward():
             self.grad += out.grad.T
@@ -233,8 +237,8 @@ class Tensor:
 
     # +++++++++++++++++ Activation Functions +++++++++++++++++
 
-    def relu(self) -> 'Tensor':
-        out = Tensor(np.maximum(self.data, 0), (self,), 'relu')
+    def relu(self) -> "Tensor":
+        out = Tensor(np.maximum(self.data, 0), (self,), "relu")
 
         def _backward():
             self.grad += (self.data > 0) * out.grad
@@ -242,8 +246,8 @@ class Tensor:
         out._backward = _backward
         return out
 
-    def sigmoid(self) -> 'Tensor':
-        out = Tensor(1 / (1 + np.exp(-self.data)), (self,), 'sigmoid')
+    def sigmoid(self) -> "Tensor":
+        out = Tensor(1 / (1 + np.exp(-self.data)), (self,), "sigmoid")
 
         def _backward():
             self.grad += out.data * (1 - out.data) * out.grad
@@ -251,8 +255,8 @@ class Tensor:
         out._backward = _backward
         return out
 
-    def tanh(self) -> 'Tensor':
-        out = Tensor(np.tanh(self.data), (self,), 'tanh')
+    def tanh(self) -> "Tensor":
+        out = Tensor(np.tanh(self.data), (self,), "tanh")
 
         def _backward():
             self.grad += (1 - np.power(out.data, 2)) * out.grad
@@ -260,20 +264,22 @@ class Tensor:
         out._backward = _backward
         return out
 
-    def activation_func(self, activation: str) -> 'Tensor':
-        if activation == 'relu':
+    def activation_func(self, activation: str) -> "Tensor":
+        if activation == "relu":
             return self.relu()
-        elif activation == 'sigmoid':
+        elif activation == "sigmoid":
             return self.sigmoid()
-        elif activation == 'tanh':
+        elif activation == "tanh":
             return self.tanh()
         else:
-            raise ValueError(f'Unknown activation function: {activation}')
+            raise ValueError(f"Unknown activation function: {activation}")
 
     # +++++++++++++++++ Loss Functions +++++++++++++++++
 
-    def cross_entropy_loss(self, target: np.ndarray) -> 'Tensor':
-        assert isinstance(target, np.ndarray) and len(target.shape) == 1, 'target must be a 1D numpy array'
+    def cross_entropy_loss(self, target: np.ndarray) -> "Tensor":
+        assert (
+            isinstance(target, np.ndarray) and len(target.shape) == 1
+        ), "target must be a 1D numpy array"
 
         N = target.shape[0]
         max_vector = np.max(self.data, axis=1, keepdims=True)  # (N, 1)
@@ -282,7 +288,11 @@ class Tensor:
         one_hot_target = np.zeros_like(softmax)  # (N, C)
         one_hot_target[np.arange(target.shape[0]), target] = 1  # (N, C)
 
-        out = Tensor(-np.sum(one_hot_target * np.log(softmax) / N), (self,), f"CE Loss \n(target={target})")
+        out = Tensor(
+            -np.sum(one_hot_target * np.log(softmax) / N),
+            (self,),
+            f"CE Loss \n(target={target})",
+        )
 
         def _backward():
             self.grad += (softmax - one_hot_target) * out.grad / N
@@ -290,8 +300,8 @@ class Tensor:
         out._backward = _backward
         return out
 
-    def regularization_loss(self, reg: float) -> 'Tensor':
-        out = Tensor(reg * np.sum(self.data ** 2), (self,), 'regularization_loss')
+    def regularization_loss(self, reg: float) -> "Tensor":
+        out = Tensor(reg * np.sum(self.data ** 2), (self,), "regularization_loss")
 
         def _backward():
             self.grad += 2 * reg * self.data * out.grad
@@ -337,20 +347,20 @@ class Tensor:
         return topo
 
     def __repr__(self) -> str:
-        return f'Tensor(data={self.data}, grad={self.grad}, label={self.label})'
+        return f"Tensor(data={self.data}, grad={self.grad}, label={self.label})"
 
 
 def test_basic_operations():
     # from plot_graph import draw_dot
 
-    a = Tensor([[1, 2], [3, 4]], label='a')
-    b = Tensor([[5, 6], [7, 8]], label='b')
-    c = Tensor([[9, 10], [11, 12]], label='c')
+    a = Tensor([[1, 2], [3, 4]], label="a")
+    b = Tensor([[5, 6], [7, 8]], label="b")
+    c = Tensor([[9, 10], [11, 12]], label="c")
 
     d = a + b
-    d.label = 'd'
+    d.label = "d"
     e = c * d
-    e.label = 'e'
+    e.label = "e"
 
     e.backward()
     # graph = draw_dot(e)
@@ -360,11 +370,11 @@ def test_basic_operations():
 def test_broadcasting():
     # from plot_graph import draw_dot
 
-    a = Tensor([1, 2, 3], label='a')
-    b = Tensor([[5, 6, 7], [8, 9, 10]], label='b')
+    a = Tensor([1, 2, 3], label="a")
+    b = Tensor([[5, 6, 7], [8, 9, 10]], label="b")
 
     c = a + b
-    c.label = 'c'
+    c.label = "c"
     d = c * 2
 
     d.backward()
@@ -376,23 +386,21 @@ def test_forward_pass():
     # from plot_graph import draw_dot
 
     # 2 dims 3 classes
-    W = Tensor([[1, 2, 3], [4, 5, 6]], label='W', is_weight=True)  # (2, 3)
-    x = Tensor([1, 2], label='x')  # (1, 2)
-    X = Tensor([[1, 2],
-                [1, 2],
-                [1, 2]], label='X', is_weight=True)  # (3, 2)
+    W = Tensor([[1, 2, 3], [4, 5, 6]], label="W", is_weight=True)  # (2, 3)
+    x = Tensor([1, 2], label="x")  # (1, 2)
+    X = Tensor([[1, 2], [1, 2], [1, 2]], label="X", is_weight=True)  # (3, 2)
 
     a = X @ W
-    a.label = 'a'
+    a.label = "a"
     y = a.cross_entropy_loss(np.array([0, 1, 1]))
-    y.label = 'y'
+    y.label = "y"
 
     y.backward()
     # graph = draw_dot(y)
     # graph.render('test_forward_pass', view=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_basic_operations()
     test_broadcasting()
     test_forward_pass()

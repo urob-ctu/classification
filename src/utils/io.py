@@ -106,7 +106,7 @@ def load_cifar10_bach_file(file: str) -> Tuple[np.ndarray, np.ndarray]:
         return X, Y
 
 
-def load_cifar10(directory: str, visualize_samples: str = False) -> Tuple:
+def load_cifar10(directory: str, visualize_samples: bool = False) -> Tuple:
     """Loads the CIFAR-10 dataset from the specified directory and splits it into training, validation, and test sets.
 
     Args:

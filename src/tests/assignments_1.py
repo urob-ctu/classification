@@ -1,13 +1,11 @@
 import numpy as np
-from utils import load_module
+
+from assignments_solution import KNNClassifier
 
 
 def test_assignment_1_1(
-    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
+    verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
-    # Dynamically import the module
-    module = load_module(src_dir, "knn_classifier")
-    KNNClassifier = module.KNNClassifier
 
     ret = {"points": 0, "message": "", "max_points": 1}
 
@@ -43,20 +41,18 @@ def test_assignment_1_1(
                 ret["points"] = ret["max_points"]
             else:
                 difference = np.sum(np.abs(dists - expected_dists))
-                ret["message"] = (
-                    f"\tFAILED! \n\tDifference of distance matrices: {difference}"
-                )
+                ret[
+                    "message"
+                ] = f"\tFAILED! \n\tDifference of distance matrices: {difference}"
         except Exception as e:
             ret["message"] = f"\tFAILED! \n\t{e}"
 
     return ret
 
+
 def test_assignment_1_2(
-    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
+    verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
-    # Dynamically import the module
-    module = load_module(src_dir, "knn_classifier")
-    KNNClassifier = module.KNNClassifier
 
     ret = {"points": 0, "message": "", "max_points": 1}
 
@@ -102,12 +98,10 @@ def test_assignment_1_2(
 
     return ret
 
+
 def test_assignment_1_3(
-    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
+    verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
-    # Dynamically import the module
-    module = load_module(src_dir, "knn_classifier")
-    KNNClassifier = module.KNNClassifier
 
     ret = {"points": 0, "message": "", "max_points": 1}
 
@@ -143,12 +137,10 @@ def test_assignment_1_3(
                 ret["points"] = ret["max_points"]
             else:
                 difference = np.sum(np.abs(dists - expected_dists))
-                ret["message"] = (
-                    f"\tFAILED! \n\tDifference of distance matrices: {difference}"
-                )
+                ret[
+                    "message"
+                ] = f"\tFAILED! \n\tDifference of distance matrices: {difference}"
         except Exception as e:
             ret["message"] = f"\tFAILED! \n\t{e}"
 
     return ret
-
-

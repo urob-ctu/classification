@@ -81,7 +81,15 @@ def plot_knn_cross_validation(k_to_metrics: dict, label_names: list = None):
     k_acc = np.array([int(k) for k in k_to_metrics["accuracy"].keys()])
     acc_means = np.array([np.mean(v) for v in k_to_metrics["accuracy"].values()])
     acc_stds = np.array([np.std(v) for v in k_to_metrics["accuracy"].values()])
-    _plot_error_bar(ax1, k_acc, acc_means, acc_stds, x_label="k", y_label="Accuracy", title="Accuracy")
+    _plot_error_bar(
+        ax1,
+        k_acc,
+        acc_means,
+        acc_stds,
+        x_label="k",
+        y_label="Accuracy",
+        title="Accuracy",
+    )
 
     # Plot precision on the second subplot
     k_pre = np.array([int(k) for k in k_to_metrics["precision"].keys()])
@@ -106,7 +114,9 @@ def plot_knn_cross_validation(k_to_metrics: dict, label_names: list = None):
     plt.show()
 
 
-def plot_training(loss_history: dict, accuracy_history: dict, ema: bool = False, alpha: float = 0.1) -> None:
+def plot_training(
+    loss_history: dict, accuracy_history: dict, ema: bool = False, alpha: float = 0.1
+) -> None:
     """Show the training history of a neural network.
 
     Args:
@@ -175,7 +185,18 @@ def plot_weights_as_templates(weights: torch.Tensor, class_labels: list):
 
     # w_min, w_max = torch.min(w), torch.max(w)
 
-    classes = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+    classes = [
+        "plane",
+        "car",
+        "bird",
+        "cat",
+        "deer",
+        "dog",
+        "frog",
+        "horse",
+        "ship",
+        "truck",
+    ]
     fig, axes = plt.subplots(2, 5, figsize=(10, 4))
     for c in range(len(classes)):
         class_vec = w[:, :, :, c].squeeze()
@@ -183,8 +204,9 @@ def plot_weights_as_templates(weights: torch.Tensor, class_labels: list):
         wimg = 255.0 * (w[:, :, :, c].squeeze() - w_min) / (w_max - w_min)
         wimg = wimg.type(torch.uint8).numpy()
         axes.flat[c].imshow(wimg)
-        axes.flat[c].axis('off')
+        axes.flat[c].axis("off")
         axes.flat[c].set_title(classes[c])
+
 
 def _plot_knn_metric(
     ax: plt.Axes,
@@ -208,7 +230,7 @@ def _plot_knn_metric(
     for i in range(metric_means.shape[0]):
         label = label_names[i] if label_names is not None else f"Class {i}"
         ax.plot(k_choices, metric_means[i], linewidth=1.5, marker="o", label=label)
-    _set_plot(ax, k_choices, 'k', metric_name, metric_name, legend=True)
+    _set_plot(ax, k_choices, "k", metric_name, metric_name, legend=True)
 
 
 def _plot_values(

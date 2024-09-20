@@ -1,55 +1,11 @@
 import numpy as np
-from utils import load_module
+
+from assignments_solution import KNNClassifier, cross_validate_knn
 
 
 def test_assignment_2_1(
-    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
+    verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
-    # Dynamically import the module
-    module = load_module(src_dir, "preprocessing")
-    reshape_to_vectors = module.reshape_to_vectors
-
-    ret = {"points": 0, "message": "", "max_points": 1}
-
-    np.random.seed(seed)
-
-    data = np.random.rand(10, 3, 4, 5, 6)
-
-    try:
-        reshaped_data = reshape_to_vectors(data)
-    except Exception as e:
-        ret["message"] = f"\tFAILED! \n\t{e}"
-        return ret
-
-    if generate:
-        np.save(verification_file, reshaped_data)
-        print(f"Successfully generated '{verification_file}'!")
-    else:
-        expected_data = np.load(verification_file)
-
-        try:
-            if np.allclose(reshaped_data, expected_data):
-                ret["message"] = f"PASSED!"
-                ret["points"] = ret["max_points"]
-            else:
-                ret["message"] = (
-                    f"\tFAILED! \n\tThe reshaped data is of shape {reshaped_data.shape}, "
-                    f"but should be of shape {expected_data.shape}."
-                )
-        except Exception as e:
-            ret["message"] = f"\tFAILED! \n\t{e}"
-
-    return ret
-
-
-def test_assignment_2_2(
-    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
-) -> dict:
-    # Dynamically import the module
-    tuning_module = load_module(src_dir, "tuning")
-    knn_module = load_module(src_dir, "knn_classifier")
-    cross_validate_knn = tuning_module.cross_validate_knn
-    KNNClassifier = knn_module.KNNClassifier
 
     ret = {"points": 0, "message": "", "max_points": 1}
 

@@ -22,7 +22,7 @@ class KNNClassifier:
     """
 
     def __init__(self, k: int = 1, vectorized: bool = False):
-        assert k > 0, 'k must be greater than 0!'
+        assert k > 0, "k must be greater than 0!"
 
         self.k = k
         self.vectorized = vectorized
@@ -57,8 +57,12 @@ class KNNClassifier:
             of features in the training data and input data do not match.
         """
 
-        assert self.X_train is not None and self.y_train is not None, 'Train the classifier first!'
-        assert self.X_train.shape[1] == X.shape[1], 'Train and test data must have the same number of features!'
+        assert (
+            self.X_train is not None and self.y_train is not None
+        ), "Train the classifier first!"
+        assert (
+            self.X_train.shape[1] == X.shape[1]
+        ), "Train and test data must have the same number of features!"
 
         if self.vectorized:
             dists = self._compute_distances_vectorized(X)
@@ -113,7 +117,7 @@ class KNNClassifier:
         num_train = self.X_train.shape[0]
         dists = np.zeros((num_test, num_train))
 
-        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 1.2 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
+        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 1.3 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
         # TODO:                                                             #
         # Calculate the L2 distance between every test point and every      #
         # training point efficiently, without resorting to explicit loops.  #
@@ -151,7 +155,8 @@ class KNNClassifier:
         num_test = dists.shape[0]
         y_pred = np.zeros(num_test)
         for i in range(num_test):
-            # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 1.3 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
+            y_pred[i] = 0
+            # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 1.2 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
             # TODO:                                                             #
             # Utilize the distance matrix to identify the k nearest neighbors   #
             # of the ith testing point. Then, retrieve the labels of these      #
@@ -166,7 +171,7 @@ class KNNClassifier:
             # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
 
             sorted_indices = np.argsort(dists[i])
-            closest_y = self.y_train[sorted_indices[:self.k]]
+            closest_y = self.y_train[sorted_indices[: self.k]]
             y_pred[i] = np.argmax(np.bincount(closest_y))
 
             # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)

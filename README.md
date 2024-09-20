@@ -14,22 +14,6 @@ classification - its understanding and implementation.
   - [Working on the Assignments](#working-on-the-assignments)
   - [How to submit](#how-to-submit)
 
-## Requirements
-
-In your environment, you need to have Python 3.12 installed. The you can run 
-
-```bash
-pip install -r requirements.txt
-```
-
-Then you have to install pytorch on your machine with this url: [Pytorch](https://pytorch.org/get-started/locally/)
-
-Optionally you can install the manim for animation:
-
-```bash
-pip install manim>=0.18.1,<0.19
-```
-
 ## What will you learn?
 
 In this homework, you will start by reviewing the basics of classification, and
@@ -107,24 +91,22 @@ To begin your journey with this assignment, follow these simple steps:
    terminal:
 
     ```shell
-    git clone https://github.com/urob-ctu/hw2.git
+    git clone https://github.com/urob-ctu/classification.git
     ```
 
-2. **Install Dependencies**: We recommend using a conda environment to manage dependencies. Create the environment by
-   executing:
+2. **Install Dependencies**: In your environment, you need to have Python 3.12 installed. Then you can run 
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+    Then you have to install pytorch on your machine with this url: [Pytorch](https://pytorch.org/get-started/locally/)
+
+    After that go to the classification directory and install the `classification` package by running:
 
     ```shell
-    conda env create --name hw2 --file environment.yaml
+    pip install -e .
     ```
-
-   After the environment is created, activate it with:
-
-    ```shell
-    conda activate hw2
-    ```
-
-   If you are using a different environment manager, please refer to the documentation for the appropriate
-   commands and make sure you have Python 3.10 installed.
 
 3. **Choose Your IDE**: Next, open the project in your preferred Integrated Development Environment (IDE). While we
    suggest PyCharm, the choice ultimately lies with you.
@@ -176,7 +158,7 @@ suboptimal grade. If you have any questions, please reach out to the teaching as
 To test your code, you can run the following command in your terminal:
 
 ```shell
-python test_assignments.py
+hw1-test
 ```
 
 ## How to submit
@@ -184,7 +166,7 @@ python test_assignments.py
 Once you've completed the assignment and are ready to submit your work, use the following command in your terminal:
 
 ```shell
-python submit.py
+hw1-submit
 ```
 
 This will create a zip file named `hw2.zip` in the project's root directory. Submit this file to

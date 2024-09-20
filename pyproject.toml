@@ -12,10 +12,8 @@ authors = [
 readme = "README.md"
 
 [project.scripts]
-hw1-hello-world = "scripts:hello_world"
 hw1-test = "scripts:test"
 hw1-submit = "scripts:submit"
-hw1-create-animation = "animation:create_animation"
 
 [tool.setuptools.packages.find]
 where = ["src"]

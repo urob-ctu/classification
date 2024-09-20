@@ -6,8 +6,13 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from assignments.knn_classifier import KNNClassifier
 
 
-def cross_validate_knn(classifier: KNNClassifier, X: np.ndarray, y: np.ndarray,
-                       k_choices: np.ndarray, num_folds: int) -> Dict[str, Dict[int, np.ndarray]]:
+def cross_validate_knn(
+    classifier: KNNClassifier,
+    X: np.ndarray,
+    y: np.ndarray,
+    k_choices: np.ndarray,
+    num_folds: int,
+) -> Dict[str, Dict[int, np.ndarray]]:
     """Performs cross-validation for kNN classifier. This is done by following the steps below:
         1. Randomly shuffle the data and labels.
         2. Split the data into k_folds.
@@ -76,7 +81,7 @@ def cross_validate_knn(classifier: KNNClassifier, X: np.ndarray, y: np.ndarray,
     k_to_metrics["recall"] = dict()
     k_to_metrics["f1"] = dict()
 
-    # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 2.2 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
+    # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 2.1 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
     # TODO:                                                             #
     # Implement cross-validation for kNN classifier. Use ChatGPT to     #
     # understand the k-fold cross-validation procedure. You may use     #
@@ -107,8 +112,8 @@ def cross_validate_knn(classifier: KNNClassifier, X: np.ndarray, y: np.ndarray,
         accuracies, precisions, recalls, f1s = [], [], [], []
         classifier.k = k
         for i in range(num_folds):
-            X_train = np.concatenate(data_folds[:i] + data_folds[i + 1:])
-            y_train = np.concatenate(label_folds[:i] + label_folds[i + 1:])
+            X_train = np.concatenate(data_folds[:i] + data_folds[i + 1 :])
+            y_train = np.concatenate(label_folds[:i] + label_folds[i + 1 :])
             X_val = data_folds[i]
             y_val = label_folds[i]
 
@@ -123,10 +128,10 @@ def cross_validate_knn(classifier: KNNClassifier, X: np.ndarray, y: np.ndarray,
         recalls = np.vstack(recalls)
         f1s = np.vstack(f1s)
 
-        k_to_metrics['accuracy'][k] = np.mean(accuracies)
-        k_to_metrics['precision'][k] = np.mean(precisions, axis=0)
-        k_to_metrics['recall'][k] = np.mean(recalls, axis=0)
-        k_to_metrics['f1'][k] = np.mean(f1s, axis=0)
+        k_to_metrics["accuracy"][k] = np.mean(accuracies)
+        k_to_metrics["precision"][k] = np.mean(precisions, axis=0)
+        k_to_metrics["recall"][k] = np.mean(recalls, axis=0)
+        k_to_metrics["f1"][k] = np.mean(f1s, axis=0)
 
     # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 

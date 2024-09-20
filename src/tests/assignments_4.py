@@ -1,42 +1,247 @@
-import sys
-import numpy as np
-from utils import load_module
+import torch
+import torch.nn as nn
+
+from assignments_solution import MLPClassifier
 
 
 def test_assignment_4_1(
-    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
+ verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
-    # Dynamically import the module
-    module = load_module(src_dir, "preprocessing")
-    normalize_data = module.normalize_data
 
     ret = {"points": 0, "message": "", "max_points": 1}
 
-    np.random.seed(seed)
+    num_features = 5
+    num_classes = 10
+    hidden_dim_1 = 20
+    hidden_dim_2 = 30
+    num_samples = 100
 
-    data = np.random.rand(10, 3)
+    torch.random.manual_seed(seed)
+
+    params = dict(
+        W1=nn.Parameter(torch.randn(num_features, hidden_dim_1, dtype=torch.float)),
+        b1=nn.Parameter(torch.zeros(hidden_dim_1, dtype=torch.float)),
+        W2=nn.Parameter(torch.randn(hidden_dim_1, hidden_dim_2, dtype=torch.float)),
+        b2=nn.Parameter(torch.zeros(hidden_dim_2, dtype=torch.float)),
+        W3=nn.Parameter(torch.randn(hidden_dim_2, num_classes, dtype=torch.float)),
+        b3=nn.Parameter(torch.zeros(num_classes, dtype=torch.float)),
+    )
+
+    X = torch.randn(num_samples, num_features)
+
     try:
-        normalized_data = normalize_data(data)
+        model = MLPClassifier(
+            num_features=num_features,
+            hidden_dim_1=hidden_dim_1,
+            hidden_dim_2=hidden_dim_2,
+            num_classes=num_classes,
+        )
+        model.params = params
+        logits = model.forward(X)
     except Exception as e:
-        ret["message"] += f"FAILED! \n\t{e}"
+        ret["message"] = f"\tFAILED! \n\t{e}"
+        return ret
 
     if generate:
-        np.save(verification_file, normalized_data)
+        torch.save(logits, verification_file)
         print(f"Successfully generated '{verification_file}'!")
     else:
-        expected_data = np.load(verification_file)
+        expected_logits = torch.load(verification_file, weights_only=True)
 
         try:
-            if np.allclose(normalized_data, expected_data):
-                ret["message"] += f"PASSED!"
+            if torch.allclose(logits, expected_logits):
+                ret["message"] = f"PASSED!"
                 ret["points"] = ret["max_points"]
             else:
-                diff = np.sum(np.abs(normalized_data - expected_data))
-                ret["message"] += (
-                    f"\tFAILED! \n\tThe difference between the normalized data and the expected data "
-                    f"is {diff}, but should be 0."
-                )
+                difference = torch.sum(torch.abs(logits - expected_logits))
+                ret["message"] = f"\tFAILED! \n\tDifference of logits: {difference}"
         except Exception as e:
-            ret["message"] += f"\tFAILED! \n\t{e}"
+            ret["message"] = f"\tFAILED! \n\t{e}"
+
+    return ret
+
+
+def test_assignment_4_2(
+ verification_file: str, seed: int = 69, generate: bool = False
+) -> dict:
+    ret = {"points": 0, "message": "", "max_points": 1}
+
+    num_features = 5
+    num_classes = 10
+    hidden_dim_1 = 20
+    hidden_dim_2 = 30
+    num_samples = 100
+
+    torch.random.manual_seed(seed)
+
+    params = dict(
+        W1=nn.Parameter(torch.randn(num_features, hidden_dim_1, dtype=torch.float)),
+        b1=nn.Parameter(torch.zeros(hidden_dim_1, dtype=torch.float)),
+        W2=nn.Parameter(torch.randn(hidden_dim_1, hidden_dim_2, dtype=torch.float)),
+        b2=nn.Parameter(torch.zeros(hidden_dim_2, dtype=torch.float)),
+        W3=nn.Parameter(torch.randn(hidden_dim_2, num_classes, dtype=torch.float)),
+        b3=nn.Parameter(torch.zeros(num_classes, dtype=torch.float)),
+    )
+
+    X = torch.randn(num_samples, num_features)
+
+    try:
+        model = MLPClassifier(
+            num_features=num_features,
+            hidden_dim_1=hidden_dim_1,
+            hidden_dim_2=hidden_dim_2,
+            num_classes=num_classes,
+        )
+        model.params = params
+        y_pred = model.predict(X)
+    except Exception as e:
+        ret["message"] = f"\tFAILED! \n\t{e}"
+        return ret
+
+    if generate:
+        torch.save(y_pred, verification_file)
+        print(f"Successfully generated '{verification_file}'!")
+    else:
+        expected_logits = torch.load(verification_file, weights_only=True)
+
+        try:
+            if torch.allclose(y_pred, expected_logits):
+                ret["message"] = f"PASSED!"
+                ret["points"] = ret["max_points"]
+            else:
+                difference = torch.sum(torch.abs(y_pred - expected_logits))
+                ret[
+                    "message"
+                ] = f"\tFAILED! \n\tDifference of predicted labels: {difference}"
+        except Exception as e:
+            ret["message"] = f"\tFAILED! \n\t{e}"
+
+    return ret
+
+
+def test_assignment_4_3(
+ verification_file: str, seed: int = 69, generate: bool = False
+) -> dict:
+    ret = {"points": 0, "message": "", "max_points": 1}
+
+    num_features = 5
+    num_classes = 10
+    hidden_dim_1 = 20
+    hidden_dim_2 = 30
+    num_samples = 100
+
+    torch.random.manual_seed(seed)
+
+    params = dict(
+        W1=nn.Parameter(torch.randn(num_features, hidden_dim_1, dtype=torch.float)),
+        b1=nn.Parameter(torch.zeros(hidden_dim_1, dtype=torch.float)),
+        W2=nn.Parameter(torch.randn(hidden_dim_1, hidden_dim_2, dtype=torch.float)),
+        b2=nn.Parameter(torch.zeros(hidden_dim_2, dtype=torch.float)),
+        W3=nn.Parameter(torch.randn(hidden_dim_2, num_classes, dtype=torch.float)),
+        b3=nn.Parameter(torch.zeros(num_classes, dtype=torch.float)),
+    )
+
+    X = torch.randn(num_samples, num_features)
+    y = torch.randint(0, num_classes, (num_samples,))
+
+    try:
+        model = MLPClassifier(
+            num_features=num_features,
+            hidden_dim_1=hidden_dim_1,
+            hidden_dim_2=hidden_dim_2,
+            num_classes=num_classes,
+        )
+        model.params = params
+        loss = model.loss(X, y)
+    except Exception as e:
+        ret["message"] = f"\tFAILED! \n\t{e}"
+        return ret
+
+    if generate:
+        torch.save(loss, verification_file)
+        print(f"Successfully generated '{verification_file}'!")
+    else:
+        expected_loss = torch.load(verification_file, weights_only=True)
+
+        try:
+            if torch.allclose(loss, expected_loss):
+                ret["message"] = f"PASSED!"
+                ret["points"] = ret["max_points"]
+            else:
+                difference = torch.sum(torch.abs(loss - expected_loss))
+                ret["message"] = f"\tFAILED! \n\tLoss difference: {difference}"
+        except Exception as e:
+            ret["message"] = f"\tFAILED! \n\t{e}"
+
+    return ret
+
+
+def test_assignment_4_4(
+verification_file: str, seed: int = 69, generate: bool = False
+) -> dict:
+    ret = {"points": 0, "message": "", "max_points": 1}
+
+    num_features = 5
+    num_classes = 10
+    hidden_dim_1 = 20
+    hidden_dim_2 = 30
+    num_samples = 100
+
+    torch.random.manual_seed(seed)
+
+    params = dict(
+        W1=nn.Parameter(torch.randn(num_features, hidden_dim_1, dtype=torch.float)),
+        b1=nn.Parameter(torch.zeros(hidden_dim_1, dtype=torch.float)),
+        W2=nn.Parameter(torch.randn(hidden_dim_1, hidden_dim_2, dtype=torch.float)),
+        b2=nn.Parameter(torch.zeros(hidden_dim_2, dtype=torch.float)),
+        W3=nn.Parameter(torch.randn(hidden_dim_2, num_classes, dtype=torch.float)),
+        b3=nn.Parameter(torch.zeros(num_classes, dtype=torch.float)),
+    )
+
+    X = torch.randn(num_samples, num_features)
+    y = torch.randint(0, num_classes, (num_samples,))
+
+    try:
+        model = MLPClassifier(
+            num_features=num_features,
+            hidden_dim_1=hidden_dim_1,
+            hidden_dim_2=hidden_dim_2,
+            num_classes=num_classes,
+        )
+        model.params = params
+        model._zero_gradients()
+        loss = model.loss(X, y)
+        loss.backward(retain_graph=True)
+        model._update_weights()
+
+    except Exception as e:
+        ret["message"] = f"\tFAILED! \n\t{e}"
+        return ret
+
+    if generate:
+        torch.save(model.params, verification_file)
+        print(f"Successfully generated '{verification_file}'!")
+    else:
+        expected_params = torch.load(verification_file, weights_only=True)
+
+        try:
+            pred_values = model.params.values()
+            expected_values = expected_params.values()
+            differences = [
+                torch.sum(torch.abs(m - exp_m))
+                for m, exp_m in zip(pred_values, expected_values)
+            ]
+            differences = torch.stack(differences)
+            param_difference = torch.sum(differences)
+
+            if param_difference < 1e-5:
+                ret["message"] = f"PASSED!"
+                ret["points"] = ret["max_points"]
+            else:
+                ret[
+                    "message"
+                ] = f"\tFAILED! \n\tParameter difference: {param_difference}"
+        except Exception as e:
+            ret["message"] = f"\tFAILED! \n\t{e}"
 
     return ret
