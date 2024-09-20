@@ -22,7 +22,7 @@ GENERATE = False
 
 SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.abspath(os.path.join(SCRIPTS_DIR, os.pardir, os.pardir))
-SRC_DIR = os.path.join(PROJECT_DIR, "src", "assignments_solution")
+SRC_DIR = os.path.join(PROJECT_DIR, "src", "assignments")
 
 ASSIGNMENTS = [
     Assignment(
@@ -91,9 +91,7 @@ ASSIGNMENTS = [
 def test():
     print("\n================= TESTING ASSIGNMENTS =================\n")
     for assignment in ASSIGNMENTS:
-        results = assignment.test_assignment(
-            generate=GENERATE, seed=SEED
-        )
+        results = assignment.test_assignment(generate=GENERATE, seed=SEED)
         print(f"{assignment.name}: \n\t{results['message']}\n")
 
 

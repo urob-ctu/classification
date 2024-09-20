@@ -1,6 +1,6 @@
 import numpy as np
 
-from assignments_solution import KNNClassifier, cross_validate_knn
+from assignments import KNNClassifier, cross_validate_knn
 
 
 def test_assignment_2_1(

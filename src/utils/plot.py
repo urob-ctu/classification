@@ -47,9 +47,7 @@ def plot_cifar10(X: np.ndarray, y: np.ndarray) -> None:
     for label, class_name in enumerate(classes):
         # Find indices of images for the current class
         indices = np.flatnonzero(y == label)
-        # Randomly sample first 7 indices
-        indices = indices[:samples_per_class]
-        # indices = np.random.choice(indices, samples_per_class, replace=False)
+        indices = np.random.choice(indices, samples_per_class, replace=False)
 
         for i, idx in enumerate(indices):
             plt_idx = i * num_classes + label + 1

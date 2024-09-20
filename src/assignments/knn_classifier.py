@@ -22,7 +22,7 @@ class KNNClassifier:
     """
 
     def __init__(self, k: int = 1, vectorized: bool = False):
-        assert k > 0, 'k must be greater than 0!'
+        assert k > 0, "k must be greater than 0!"
 
         self.k = k
         self.vectorized = vectorized
@@ -57,8 +57,12 @@ class KNNClassifier:
             of features in the training data and input data do not match.
         """
 
-        assert self.X_train is not None and self.y_train is not None, 'Train the classifier first!'
-        assert self.X_train.shape[1] == X.shape[1], 'Train and test data must have the same number of features!'
+        assert (
+            self.X_train is not None and self.y_train is not None
+        ), "Train the classifier first!"
+        assert (
+            self.X_train.shape[1] == X.shape[1]
+        ), "Train and test data must have the same number of features!"
 
         if self.vectorized:
             dists = self._compute_distances_vectorized(X)
@@ -83,7 +87,6 @@ class KNNClassifier:
 
         for i in range(num_test):
             for j in range(num_train):
-                dists[i, j] = 0
                 # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 1.1 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
                 # TODO:                                                             #
                 # Calculate the L2 distance between the ith test point and the jth  #
@@ -91,13 +94,11 @@ class KNNClassifier:
                 # loops over dimensions or np.linalg.norm().                        #
                 # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
                 # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
-                #
-                #                    ╔═══════════════════════╗
-                #                    ║                       ║
-                #                    ║       YOUR CODE       ║
-                #                    ║                       ║
-                #                    ╚═══════════════════════╝
-                #
+
+                dif_vector = X[i] - self.X_train[j]
+                distance = np.sqrt(np.dot(dif_vector, dif_vector))
+                dists[i, j] = distance
+
                 # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 
         return dists
@@ -131,13 +132,13 @@ class KNNClassifier:
         # want to look this up on the internet.)                            #
         # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
         # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
-        #
-        #                    ╔═══════════════════════╗
-        #                    ║                       ║
-        #                    ║       YOUR CODE       ║
-        #                    ║                       ║
-        #                    ╚═══════════════════════╝
-        #
+
+        train_matrix = np.dot(self.X_train, self.X_train.T).diagonal()[np.newaxis, ...]
+        test_matrix = np.dot(X, X.T).diagonal()[..., np.newaxis]
+        mult_matrix = np.dot(X, self.X_train.T)
+
+        dists = np.sqrt(train_matrix - 2 * mult_matrix + test_matrix)
+
         # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 
         return dists
@@ -168,13 +169,11 @@ class KNNClassifier:
             # functions useful.                                                 #
             # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
             # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
-            #
-            #                    ╔═══════════════════════╗
-            #                    ║                       ║
-            #                    ║       YOUR CODE       ║
-            #                    ║                       ║
-            #                    ╚═══════════════════════╝
-            #
+
+            sorted_indices = np.argsort(dists[i])
+            closest_y = self.y_train[sorted_indices[: self.k]]
+            y_pred[i] = np.argmax(np.bincount(closest_y))
+
             # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 
         return y_pred

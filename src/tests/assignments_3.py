@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from assignments_solution import LinearClassifier
+from assignments import LinearClassifier
 
 
 def test_assignment_3_1(

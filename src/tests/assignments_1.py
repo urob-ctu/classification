@@ -1,6 +1,6 @@
 import numpy as np
 
-from assignments_solution import KNNClassifier
+from assignments import KNNClassifier
 
 
 def test_assignment_1_1(

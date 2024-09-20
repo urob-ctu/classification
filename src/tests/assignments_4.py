@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
 
-from assignments_solution import MLPClassifier
+from assignments import MLPClassifier
 
 
 def test_assignment_4_1(
- verification_file: str, seed: int = 69, generate: bool = False
+    verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
 
     ret = {"points": 0, "message": "", "max_points": 1}
@@ -62,7 +62,7 @@ def test_assignment_4_1(
 
 
 def test_assignment_4_2(
- verification_file: str, seed: int = 69, generate: bool = False
+    verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
     ret = {"points": 0, "message": "", "max_points": 1}
 
@@ -120,7 +120,7 @@ def test_assignment_4_2(
 
 
 def test_assignment_4_3(
- verification_file: str, seed: int = 69, generate: bool = False
+    verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
     ret = {"points": 0, "message": "", "max_points": 1}
 
@@ -177,7 +177,7 @@ def test_assignment_4_3(
 
 
 def test_assignment_4_4(
-verification_file: str, seed: int = 69, generate: bool = False
+    verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
     ret = {"points": 0, "message": "", "max_points": 1}
 

@@ -5,12 +5,19 @@ import subprocess
 from typing import List
 
 ASSIGNMENTS_FOLDER = "src/assignments"
-NOTEBOOK_FILES = ["knn_part_1.ipynb", "knn_part_2.ipynb",
-                  "linear_part_1.ipynb", "linear_part_2.ipynb",
-                  "mlp_part_1.ipynb", "mlp_part_2.ipynb"]
+NOTEBOOK_FILES = [
+    "knn_part_1.ipynb",
+    "knn_part_2.ipynb",
+    "linear_part_1.ipynb",
+    "linear_part_2.ipynb",
+    "mlp_part_1.ipynb",
+    "mlp_part_2.ipynb",
+]
 
 
-def preprocess_notebooks(input_files: List[str], output_files: List[str], root_path: str) -> None:
+def preprocess_notebooks(
+    input_files: List[str], output_files: List[str], root_path: str
+) -> None:
     """This function preprocesses the Jupyter notebooks by replacing the relative paths of the images
     with absolute paths.
 
@@ -32,7 +39,9 @@ def preprocess_notebooks(input_files: List[str], output_files: List[str], root_p
 
         for cell in notebook.cells:
             if cell.cell_type == "markdown":
-                cell.source = cell.source.replace('<img src="', f'<img src="{root_path}/')
+                cell.source = cell.source.replace(
+                    '<img src="', f'<img src="{root_path}/'
+                )
 
             with open(output_path, "w") as outfile:
                 nbformat.write(notebook, outfile)
@@ -71,7 +80,9 @@ def submit():
 
     # html_files = [os.path.join(root_path, f) for f in HTML_FILES]
     notebook_files = [os.path.join(root_path, f) for f in NOTEBOOK_FILES]
-    preprocessed_notebook_files = [os.path.join(notebooks_folder, f) for f in NOTEBOOK_FILES]
+    preprocessed_notebook_files = [
+        os.path.join(notebooks_folder, f) for f in NOTEBOOK_FILES
+    ]
 
     # Create the notebooks folder
     print(f"\n================= SETUP =================\n")
@@ -98,7 +109,9 @@ def submit():
     notebooks_folder = notebooks_folder.replace(root_path + "/", "")
 
     print(f"\tINFO: Creating {output_file}.")
-    print(f"\tINFO: Adding {assignments_folder} and {notebooks_folder} to the zip file.")
+    print(
+        f"\tINFO: Adding {assignments_folder} and {notebooks_folder} to the zip file."
+    )
     subprocess.run(["zip", "-r", output_file, assignments_folder, notebooks_folder])
 
     # Remove the notebooks folder
