@@ -14,6 +14,11 @@ NOTEBOOK_FILES = [
     "mlp_part_2.ipynb",
 ]
 
+scripts_dir = os.path.join(os.path.dirname(__file__))
+PROJECT_DIR = os.path.abspath(os.path.join(scripts_dir, os.pardir, os.pardir))
+
+ZIP_FILE = "hw1.zip"
+
 
 def preprocess_notebooks(
     input_files: List[str], output_files: List[str], root_path: str
@@ -71,15 +76,13 @@ def create_html_files(jupyter_files: list, remove_original: bool = True):
 
 
 def submit():
-    root_path = os.path.dirname(os.path.realpath(__file__))
+    output_file = os.path.join(PROJECT_DIR, ZIP_FILE)
 
-    output_file = os.path.join(root_path, "hw2.zip")
-
-    notebooks_folder = os.path.join(root_path, "notebooks")
-    assignments_folder = os.path.join(root_path, ASSIGNMENTS_FOLDER)
+    notebooks_folder = os.path.join(PROJECT_DIR, "notebooks")
+    assignments_folder = os.path.join(PROJECT_DIR, ASSIGNMENTS_FOLDER)
 
     # html_files = [os.path.join(root_path, f) for f in HTML_FILES]
-    notebook_files = [os.path.join(root_path, f) for f in NOTEBOOK_FILES]
+    notebook_files = [os.path.join(PROJECT_DIR, f) for f in NOTEBOOK_FILES]
     preprocessed_notebook_files = [
         os.path.join(notebooks_folder, f) for f in NOTEBOOK_FILES
     ]
@@ -95,7 +98,7 @@ def submit():
 
     # Preprocess the notebooks
     print(f"\n================= PREPROCESSING =================\n")
-    preprocess_notebooks(notebook_files, preprocessed_notebook_files, root_path)
+    preprocess_notebooks(notebook_files, preprocessed_notebook_files, PROJECT_DIR)
 
     # Create the HTML files
     print(f"\n================= CREATING HTML FILES =================\n")
@@ -105,8 +108,8 @@ def submit():
     print(f"\n================= CREATING ZIP FILE =================\n")
 
     # Remove the root path for the zip command
-    assignments_folder = assignments_folder.replace(root_path + "/", "")
-    notebooks_folder = notebooks_folder.replace(root_path + "/", "")
+    assignments_folder = assignments_folder.replace(PROJECT_DIR + "/", "")
+    notebooks_folder = notebooks_folder.replace(PROJECT_DIR + "/", "")
 
     print(f"\tINFO: Creating {output_file}.")
     print(
