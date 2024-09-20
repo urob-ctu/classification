@@ -7,11 +7,11 @@ data/models/*
 #data/videos/*
 #!data/videos/.gitkeep
 
-.idea/
 *.zip
 *.pyc
 *__pycache__*
 .pixi
 *.egg-info
 
+.idea/
 .vscode/
