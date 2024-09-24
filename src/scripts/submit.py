@@ -78,8 +78,8 @@ def create_html_files(jupyter_files: list, remove_original: bool = True):
 def submit():
     output_file = os.path.join(PROJECT_DIR, ZIP_FILE)
 
-    notebooks_folder = os.path.join(PROJECT_DIR, "notebooks")
-    assignments_folder = os.path.join(PROJECT_DIR, ASSIGNMENTS_FOLDER)
+    notebooks_folder = os.path.join(PROJECT_DIR, "tmp", "notebooks")
+    assignments_folder = os.path.join(PROJECT_DIR, "src", "assignments")
 
     # html_files = [os.path.join(root_path, f) for f in HTML_FILES]
     notebook_files = [os.path.join(PROJECT_DIR, f) for f in NOTEBOOK_FILES]
@@ -90,7 +90,7 @@ def submit():
     # Create the notebooks folder
     print(f"\n================= SETUP =================\n")
     if not os.path.isdir(notebooks_folder):
-        os.mkdir(notebooks_folder)
+        os.makedirs(notebooks_folder, exist_ok=True)
         print(f"\tINFO: Created {notebooks_folder}.")
     else:
         print(f"\tERROR: {notebooks_folder} already exists. Exiting...")
@@ -108,14 +108,15 @@ def submit():
     print(f"\n================= CREATING ZIP FILE =================\n")
 
     # Remove the root path for the zip command
-    assignments_folder = assignments_folder.replace(PROJECT_DIR + "/", "")
-    notebooks_folder = notebooks_folder.replace(PROJECT_DIR + "/", "")
+    assignments_folder_relative = assignments_folder.replace(PROJECT_DIR + "/", "")
+    notebooks_folder_relative = notebooks_folder.replace(PROJECT_DIR + "/", "")
 
     print(f"\tINFO: Creating {output_file}.")
     print(
         f"\tINFO: Adding {assignments_folder} and {notebooks_folder} to the zip file."
     )
-    subprocess.run(["zip", "-r", output_file, assignments_folder, notebooks_folder])
+    subprocess.run(["zip", "-r", output_file, assignments_folder_relative, notebooks_folder_relative],
+                   cwd=PROJECT_DIR)
 
     # Remove the notebooks folder
     print(f"\n================= CLEANUP =================\n")
