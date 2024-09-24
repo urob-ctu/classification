@@ -1,12 +1,14 @@
 import torch
 import torch.nn as nn
 
-from assignments import LinearClassifier
-
+from .utils import load_module
 
 def test_assignment_3_1(
-    verification_file: str, seed: int = 69, generate: bool = False
+    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
+
+    lin_classifier_module = load_module(src_dir, "linear_classifier")
+    LinearClassifier = lin_classifier_module.LinearClassifier
 
     ret = {"points": 0, "message": "", "max_points": 1}
 
@@ -50,8 +52,11 @@ def test_assignment_3_1(
 
 
 def test_assignment_3_2(
-    verification_file: str, seed: int = 69, generate: bool = False
+    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
+
+    lin_classifier_module = load_module(src_dir, "linear_classifier")
+    LinearClassifier = lin_classifier_module.LinearClassifier
 
     ret = {"points": 0, "message": "", "max_points": 1}
 
@@ -97,8 +102,11 @@ def test_assignment_3_2(
 
 
 def test_assignment_3_3(
-    verification_file: str, seed: int = 69, generate: bool = False
+    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
+
+    lin_classifier_module = load_module(src_dir, "linear_classifier")
+    LinearClassifier = lin_classifier_module.LinearClassifier
 
     ret = {"points": 0, "message": "", "max_points": 1}
 
@@ -143,8 +151,11 @@ def test_assignment_3_3(
 
 
 def test_assignment_3_4(
-    verification_file: str, seed: int = 69, generate: bool = False
+    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
+
+    lin_classifier_module = load_module(src_dir, "linear_classifier")
+    LinearClassifier = lin_classifier_module.LinearClassifier
 
     ret = {"points": 0, "message": "", "max_points": 1}
 

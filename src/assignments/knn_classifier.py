@@ -91,10 +91,13 @@ class KNNClassifier:
                 # loops over dimensions or np.linalg.norm().                        #
                 # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
                 # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
-
-                dif_vector = X[i] - self.X_train[j]
-                distance = np.sqrt(np.dot(dif_vector, dif_vector))
-                dists[i, j] = distance
+                #
+                #                    ╔═══════════════════════╗
+                #                    ║                       ║
+                #                    ║       YOUR CODE       ║
+                #                    ║                       ║
+                #                    ╚═══════════════════════╝
+                #
 
                 # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 
@@ -129,12 +132,13 @@ class KNNClassifier:
         # want to look this up on the internet.)                            #
         # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
         # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
-
-        train_matrix = np.dot(self.X_train, self.X_train.T).diagonal()[np.newaxis, ...]
-        test_matrix = np.dot(X, X.T).diagonal()[..., np.newaxis]
-        mult_matrix = np.dot(X, self.X_train.T)
-
-        dists = np.sqrt(train_matrix - 2 * mult_matrix + test_matrix)
+        #
+        #                    ╔═══════════════════════╗
+        #                    ║                       ║
+        #                    ║       YOUR CODE       ║
+        #                    ║                       ║
+        #                    ╚═══════════════════════╝
+        #
 
         # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 
@@ -166,10 +170,13 @@ class KNNClassifier:
             # functions useful.                                                 #
             # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
             # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
-
-            sorted_indices = np.argsort(dists[i])
-            closest_y = self.y_train[sorted_indices[: self.k]]
-            y_pred[i] = np.argmax(np.bincount(closest_y))
+            #
+            #                    ╔═══════════════════════╗
+            #                    ║                       ║
+            #                    ║       YOUR CODE       ║
+            #                    ║                       ║
+            #                    ╚═══════════════════════╝
+            #
 
             # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 

@@ -1,11 +1,15 @@
+import os
 import numpy as np
 
-from assignments import KNNClassifier
+from .utils import load_module
 
 
 def test_assignment_1_1(
-    verification_file: str, seed: int = 69, generate: bool = False
+    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
+
+    knn_module = load_module(src_dir, "knn_classifier")
+    KNNClassifier = knn_module.KNNClassifier
 
     ret = {"points": 0, "message": "", "max_points": 1}
 
@@ -51,8 +55,11 @@ def test_assignment_1_1(
 
 
 def test_assignment_1_2(
-    verification_file: str, seed: int = 69, generate: bool = False
+    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
+
+    knn_module = load_module(src_dir, "knn_classifier")
+    KNNClassifier = knn_module.KNNClassifier
 
     ret = {"points": 0, "message": "", "max_points": 1}
 
@@ -100,8 +107,11 @@ def test_assignment_1_2(
 
 
 def test_assignment_1_3(
-    verification_file: str, seed: int = 69, generate: bool = False
+    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
+
+    knn_module = load_module(src_dir, "knn_classifier")
+    KNNClassifier = knn_module.KNNClassifier
 
     ret = {"points": 0, "message": "", "max_points": 1}
 

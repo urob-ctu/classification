@@ -98,40 +98,13 @@ def cross_validate_knn(
     # Good luck!                                                        #
     # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
     # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
-
-    # Randomly shuffle data and labels
-    indices = np.arange(X.shape[0])
-    np.random.shuffle(indices)
-    X, y = X[indices], y[indices]
-
-    # Split data into 5 folds
-    data_folds = np.array_split(X, num_folds)
-    label_folds = np.array_split(y, num_folds)
-
-    for k in k_choices:
-        accuracies, precisions, recalls, f1s = [], [], [], []
-        classifier.k = k
-        for i in range(num_folds):
-            X_train = np.concatenate(data_folds[:i] + data_folds[i + 1 :])
-            y_train = np.concatenate(label_folds[:i] + label_folds[i + 1 :])
-            X_val = data_folds[i]
-            y_val = label_folds[i]
-
-            classifier.train(X_train, y_train)
-            y_pred = classifier.predict(X_val)
-            accuracies.append(accuracy_score(y_val, y_pred, normalize=True))
-            precisions.append(precision_score(y_val, y_pred, average=None))
-            recalls.append(recall_score(y_val, y_pred, average=None))
-            f1s.append(f1_score(y_val, y_pred, average=None))
-
-        precisions = np.vstack(precisions)
-        recalls = np.vstack(recalls)
-        f1s = np.vstack(f1s)
-
-        k_to_metrics["accuracy"][k] = np.mean(accuracies)
-        k_to_metrics["precision"][k] = np.mean(precisions, axis=0)
-        k_to_metrics["recall"][k] = np.mean(recalls, axis=0)
-        k_to_metrics["f1"][k] = np.mean(f1s, axis=0)
+    #
+    #                    ╔═══════════════════════╗
+    #                    ║                       ║
+    #                    ║       YOUR CODE       ║
+    #                    ║                       ║
+    #                    ╚═══════════════════════╝
+    #
 
     # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 

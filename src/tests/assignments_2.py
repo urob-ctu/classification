@@ -1,11 +1,15 @@
 import numpy as np
 
-from assignments import KNNClassifier, cross_validate_knn
-
+from .utils import load_module
 
 def test_assignment_2_1(
-    verification_file: str, seed: int = 69, generate: bool = False
+    src_dir: str, verification_file: str, seed: int = 69, generate: bool = False
 ) -> dict:
+
+    knn_module = load_module(src_dir, "knn_classifier")
+    tuning_module = load_module(src_dir, "tuning")
+    KNNClassifier = knn_module.KNNClassifier
+    cross_validate_knn = tuning_module.cross_validate_knn
 
     ret = {"points": 0, "message": "", "max_points": 1}
 
