@@ -16,9 +16,6 @@ class KNNClassifier:
         vectorized (bool): Indicates whether vectorized calculations for distance computation are enabled.
         X_train (numpy.ndarray or None): The training data features.
         y_train (numpy.ndarray or None): The training data labels.
-
-    Raises:
-        AssertionError: If k is less than or equal to 0.
     """
 
     def __init__(self, k: int = 1, vectorized: bool = False):
