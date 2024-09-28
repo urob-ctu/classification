@@ -105,7 +105,7 @@ class LinearClassifier:
             logits: The logits of the model. Tensor of shape (N, C)
 
         """
-        logits = torch.zeros((X.shape[0], self.num_classes))
+        logits = torch.zeros((X.shape[0], self.num_features))
 
         # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 3.1 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
         # TODO:                                                             #
