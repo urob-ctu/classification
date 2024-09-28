@@ -174,7 +174,7 @@ class LinearClassifier:
         # should be the cross-entropy loss with L2 regularization.          #
         #                                                                   #
         # HINT: You may find torch.nn.CrossEntropyLoss() useful.            #
-        #                                                                   #
+        # HINT: Use self.reg as your regularization hyperparameter.         #
         # Good luck!                                                        #
         # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
         # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
@@ -199,7 +199,7 @@ class LinearClassifier:
         # should be the cross-entropy loss with L2 regularization.          #
         #                                                                   #
         # HINT: You may find torch.nn.CrossEntropyLoss() useful.            #
-        #                                                                   #
+        # HINT: Use self.learning_rate to scale the updates to the weights. #
         # Good luck!                                                        #
         # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
         # 🌀 INCEPTION 🌀 (Your code begins its journey here. 🚀 Do not delete this line.)
