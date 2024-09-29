@@ -78,7 +78,7 @@ def create_html_files(jupyter_files: list, remove_original: bool = True):
 def submit():
     output_file = os.path.join(PROJECT_DIR, ZIP_FILE)
 
-    notebooks_folder = os.path.join(PROJECT_DIR, "tmp", "notebooks")
+    notebooks_folder = os.path.join(PROJECT_DIR, "tmp_notebooks")
     assignments_folder = os.path.join(PROJECT_DIR, "src", "assignments")
 
     # html_files = [os.path.join(root_path, f) for f in HTML_FILES]
