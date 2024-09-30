@@ -167,6 +167,9 @@ def test():
     dataset_dir = os.path.abspath(args.dataset_dir)
     assignments_dir = os.path.join(src_dir, "assignments")
 
+    print(f"DEBUG: src_dir: {src_dir}")
+    print(f"DEBUG: dataset_dir: {dataset_dir}")
+
     # Make sure that the results are saved no matter what
     if args.save_results:
         atexit.register(save_results, src_dir)
@@ -187,6 +190,7 @@ def test():
     for module in MODULES:
         module_name = f"assignments.{module}"
         module_path = os.path.join(assignments_dir, module + ".py")
+        print(f"DEBUG: module_path: {module_path}")
         if not os.path.exists(module_path):
             RESULT["success"] = False
             RESULT["failure_message"] = f"Module file {module_name} could not be found."
