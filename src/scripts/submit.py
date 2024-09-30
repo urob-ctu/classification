@@ -1,8 +1,9 @@
 import os
 import shutil
-import nbformat
 import subprocess
 from typing import List
+
+import nbformat
 
 ASSIGNMENTS_FOLDER = "src/assignments"
 NOTEBOOK_FILES = [
@@ -78,7 +79,7 @@ def create_html_files(jupyter_files: list, remove_original: bool = True):
 def submit():
     output_file = os.path.join(PROJECT_DIR, ZIP_FILE)
 
-    notebooks_folder = os.path.join(PROJECT_DIR, "tmp_notebooks")
+    notebooks_folder = os.path.join(PROJECT_DIR, "notebooks")
     assignments_folder = os.path.join(PROJECT_DIR, "src", "assignments")
 
     # html_files = [os.path.join(root_path, f) for f in HTML_FILES]
@@ -86,6 +87,9 @@ def submit():
     preprocessed_notebook_files = [
         os.path.join(notebooks_folder, f) for f in NOTEBOOK_FILES
     ]
+
+    # Change the .ipynb files to .html files
+
 
     # Create the notebooks folder
     print(f"\n================= SETUP =================\n")
@@ -102,7 +106,11 @@ def submit():
 
     # Create the HTML files
     print(f"\n================= CREATING HTML FILES =================\n")
-    create_html_files(preprocessed_notebook_files, remove_original=True)
+    create_html_files(preprocessed_notebook_files, remove_original=False)
+
+    # List the files in the preprocessed notebooks folder
+    print(f"\n================= LISTING FILES =================\n")
+    subprocess.run(["ls", "-l", notebooks_folder])
 
     # Create the zip file from assignments folder and notebooks folder
     print(f"\n================= CREATING ZIP FILE =================\n")
@@ -110,6 +118,9 @@ def submit():
     # Remove the root path for the zip command
     assignments_folder_relative = assignments_folder.replace(PROJECT_DIR + "/", "")
     notebooks_folder_relative = notebooks_folder.replace(PROJECT_DIR + "/", "")
+
+    print(f"\tINFO: Assignments folder relative path: {assignments_folder_relative}")
+    print(f"\tINFO: Notebooks folder relative path: {notebooks_folder_relative}")
 
     print(f"\tINFO: Creating {output_file}.")
     print(

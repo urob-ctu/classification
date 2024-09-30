@@ -192,15 +192,12 @@ def test():
             RESULT["failure_message"] = f"Module file {module_name} could not be found."
             sys.exit(1)
 
-    # Append the source directory to the system path
-    sys.path.append(src_dir)
-
     # Check if the modules can be imported and if the functions and classes exist
     try:
-        from assignments.tuning import cross_validate_knn
-        from assignments.knn_classifier import KNNClassifier
-        from assignments.mlp_classifier import MLPClassifier
-        from assignments.linear_classifier import LinearClassifier
+        from src.assignments.tuning import cross_validate_knn
+        from src.assignments.knn_classifier import KNNClassifier
+        from src.assignments.mlp_classifier import MLPClassifier
+        from src.assignments.linear_classifier import LinearClassifier
     except Exception as e:
         RESULT["success"] = False
         RESULT["failure_message"] += f"Error while importing modules: {e}"
