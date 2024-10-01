@@ -167,12 +167,9 @@ def test():
     dataset_dir = os.path.abspath(args.dataset_dir)
     assignments_dir = os.path.join(src_dir, "assignments")
 
-    print(f"DEBUG: src_dir: {src_dir}")
-    print(f"DEBUG: dataset_dir: {dataset_dir}")
-
     # Make sure that the results are saved no matter what
     if args.save_results:
-        atexit.register(save_results, src_dir)
+        atexit.register(save_results, os.path.join(src_dir, os.pardir))
 
     # Check if the source directory exists
     if not os.path.isdir(src_dir):
