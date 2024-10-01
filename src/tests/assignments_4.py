@@ -10,7 +10,7 @@ def test_assignment_4_1(
     mlp_classifier_module = load_module(src_dir, "mlp_classifier")
     MLPClassifier = mlp_classifier_module.MLPClassifier
 
-    ret = {"points": 0, "message": "", "max_points": 1}
+    ret = {"points": 0, "message": "", "max_points": 0.5}
 
     num_features = 5
     num_classes = 10
@@ -70,7 +70,7 @@ def test_assignment_4_2(
     mlp_classifier_module = load_module(src_dir, "mlp_classifier")
     MLPClassifier = mlp_classifier_module.MLPClassifier
 
-    ret = {"points": 0, "message": "", "max_points": 1}
+    ret = {"points": 0, "message": "", "max_points": 0.5}
 
     num_features = 5
     num_classes = 10
@@ -130,7 +130,7 @@ def test_assignment_4_3(
 ) -> dict:
     mlp_classifier_module = load_module(src_dir, "mlp_classifier")
     MLPClassifier = mlp_classifier_module.MLPClassifier
-    ret = {"points": 0, "message": "", "max_points": 1}
+    ret = {"points": 0, "message": "", "max_points": 0.5}
 
     num_features = 5
     num_classes = 10
@@ -191,7 +191,7 @@ def test_assignment_4_4(
     mlp_classifier_module = load_module(src_dir, "mlp_classifier")
     MLPClassifier = mlp_classifier_module.MLPClassifier
 
-    ret = {"points": 0, "message": "", "max_points": 1}
+    ret = {"points": 0, "message": "", "max_points": 0.5}
 
     num_features = 5
     num_classes = 10
