@@ -173,7 +173,8 @@ class LinearClassifier:
         # Implement the loss function of the model. The loss function       #
         # should be the cross-entropy loss with L2 regularization.          #
         #                                                                   #
-        # HINT: You may find torch.nn.CrossEntropyLoss() useful.            #
+        # HINT 1: You may find torch.nn.CrossEntropyLoss() useful.          #
+        # HINT 2: Use the self.reg attribute for the regularization term.   #
         #                                                                   #
         # Good luck!                                                        #
         # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
@@ -198,7 +199,9 @@ class LinearClassifier:
         # Implement the loss function of the model. The loss function       #
         # should be the cross-entropy loss with L2 regularization.          #
         #                                                                   #
-        # HINT: You may find torch.nn.CrossEntropyLoss() useful.            #
+        # HINT 1: You may find torch.nn.CrossEntropyLoss() useful.          #
+        # HINT 2: Use the self.learning_rate attribute for the              #
+        # learning rate.                                                    #
         #                                                                   #
         # Good luck!                                                        #
         # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
