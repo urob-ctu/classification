@@ -12,8 +12,9 @@ authors = [
 readme = "README.md"
 
 [project.scripts]
-hw1-test = "scripts:test"
 hw1-submit = "scripts:submit"
+hw1-test-env = "scripts:test_env"
+hw1-test-assignments = "scripts:test"
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -193,17 +193,6 @@ def test():
             RESULT["failure_message"] = f"Module file {module_name} could not be found."
             sys.exit(1)
 
-    # # Check if the modules can be imported and if the functions and classes exist
-    # try:
-    #     from src.assignments.tuning import cross_validate_knn
-    #     from src.assignments.knn_classifier import KNNClassifier
-    #     from src.assignments.mlp_classifier import MLPClassifier
-    #     from src.assignments.linear_classifier import LinearClassifier
-    # except Exception as e:
-    #     RESULT["success"] = False
-    #     RESULT["failure_message"] += f"Error while importing modules: {e}"
-    #     sys.exit(1)
-
     print("\n================= TESTING ASSIGNMENTS =================\n")
     for assignment in create_assignments(dataset_dir):
         results = assignment.test_assignment(
