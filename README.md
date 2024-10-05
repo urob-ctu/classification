@@ -107,8 +107,23 @@ To begin your journey with this assignment, follow these simple steps:
     ```shell
     pip install -e .
     ```
+   
+3. **Check Your Installation**: To verify that the installation was successful, run the following command in your
+   terminal:
 
-3. **Choose Your IDE**: Next, open the project in your preferred Integrated Development Environment (IDE). While we
+    ```shell
+    hw1-test-env
+    ```
+
+    If the installation was successful, you should see a message indicating that the tests passed. If you encounter any
+    issues, please reach out to the teaching assistants for assistance.
+    
+    ```shell
+    $ hw1-test-env 
+    INFO: Environment is correctly set up.
+    ```
+   
+4. **Choose Your IDE**: Next, open the project in your preferred Integrated Development Environment (IDE). While we
    suggest PyCharm, the choice ultimately lies with you.
 
    > **Warning**
