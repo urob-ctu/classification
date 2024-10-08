@@ -1,6 +1,6 @@
 # HW 2 - Classification
 
-This is official repository for the second homework assignment of the
+This is official repository for the first homework assignment of the
 course [UROB](https://intranet.fel.cvut.cz/cz/education/bk/predmety/66/51/p6651806.html). The assignment is about
 classification - its understanding and implementation.
 
