@@ -1,6 +1,6 @@
 import os
 import numpy as np
-
+import traceback
 from .utils import load_module
 
 
@@ -49,7 +49,7 @@ def test_assignment_1_1(
                     "message"
                 ] = f"\tFAILED! \n\tDifference of distance matrices: {difference}"
         except Exception as e:
-            ret["message"] = f"\tFAILED! \n\t{e}"
+            ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
 
     return ret
 
@@ -82,7 +82,7 @@ def test_assignment_1_2(
         classifier.train(X_train, y_train)
         y_pred = classifier._predict_labels(dists)
     except Exception as e:
-        ret["message"] += f"\tFAILED! \n\t{e}"
+        ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
         return ret
 
     if generate:
@@ -101,7 +101,7 @@ def test_assignment_1_2(
                     "message"
                 ] += f"\tFAILED! \n\tDifference of predicted labels: {difference}"
         except Exception as e:
-            ret["message"] += f"\tFAILED! \n\t{e}"
+            ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
 
     return ret
 
@@ -132,7 +132,7 @@ def test_assignment_1_3(
         classifier.train(X_train, y_train)
         dists = classifier._compute_distances_vectorized(X_test)
     except Exception as e:
-        ret["message"] = f"\tFAILED! \n\t{e}"
+        ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
         return ret
 
     if generate:
@@ -151,6 +151,6 @@ def test_assignment_1_3(
                     "message"
                 ] = f"\tFAILED! \n\tDifference of distance matrices: {difference}"
         except Exception as e:
-            ret["message"] = f"\tFAILED! \n\t{e}"
+            ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
 
     return ret

@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import traceback
 
 from .utils import load_module
 
@@ -41,7 +42,7 @@ def test_assignment_4_1(
         model.params = params
         logits = model.forward(X)
     except Exception as e:
-        ret["message"] = f"\tFAILED! \n\t{e}"
+        ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
         return ret
 
     if generate:
@@ -58,7 +59,7 @@ def test_assignment_4_1(
                 difference = torch.sum(torch.abs(logits - expected_logits))
                 ret["message"] = f"\tFAILED! \n\tDifference of logits: {difference}"
         except Exception as e:
-            ret["message"] = f"\tFAILED! \n\t{e}"
+            ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
 
     return ret
 
@@ -101,7 +102,7 @@ def test_assignment_4_2(
         model.params = params
         y_pred = model.predict(X)
     except Exception as e:
-        ret["message"] = f"\tFAILED! \n\t{e}"
+        ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
         return ret
 
     if generate:
@@ -120,7 +121,7 @@ def test_assignment_4_2(
                     "message"
                 ] = f"\tFAILED! \n\tDifference of predicted labels: {difference}"
         except Exception as e:
-            ret["message"] = f"\tFAILED! \n\t{e}"
+            ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
 
     return ret
 
@@ -162,7 +163,7 @@ def test_assignment_4_3(
         model.params = params
         loss = model.loss(X, y)
     except Exception as e:
-        ret["message"] = f"\tFAILED! \n\t{e}"
+        ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
         return ret
 
     if generate:
@@ -179,7 +180,7 @@ def test_assignment_4_3(
                 difference = torch.sum(torch.abs(loss - expected_loss))
                 ret["message"] = f"\tFAILED! \n\tLoss difference: {difference}"
         except Exception as e:
-            ret["message"] = f"\tFAILED! \n\t{e}"
+            ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
 
     return ret
 
@@ -227,7 +228,7 @@ def test_assignment_4_4(
         model._update_weights()
 
     except Exception as e:
-        ret["message"] = f"\tFAILED! \n\t{e}"
+        ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
         return ret
 
     if generate:
@@ -254,6 +255,6 @@ def test_assignment_4_4(
                     "message"
                 ] = f"\tFAILED! \n\tParameter difference: {param_difference}"
         except Exception as e:
-            ret["message"] = f"\tFAILED! \n\t{e}"
+            ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
 
     return ret

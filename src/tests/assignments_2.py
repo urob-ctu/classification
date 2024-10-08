@@ -1,3 +1,5 @@
+import traceback
+
 import numpy as np
 
 from .utils import load_module
@@ -30,7 +32,7 @@ def test_assignment_2_1(
         classifier = KNNClassifier(k=3, vectorized=True)
         k_to_metrics = cross_validate_knn(classifier, X, y, k_choices, num_folds)
     except Exception as e:
-        ret["message"] = f"\tFAILED! \n\t{e}"
+        ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
         return ret
 
     if generate:
@@ -76,6 +78,6 @@ def test_assignment_2_1(
                     f"acc: {acc_diff}, prec: {prec_diff}, recall: {recall_diff}, f1: {f1_diff}."
                 )
         except Exception as e:
-            ret["message"] += f"\tFAILED! \n\t{e}"
+            ret["message"] = f"\tFAILED! \n\t{e.__class__.__name__}:{e}\n{traceback.format_exc()}"
 
     return ret

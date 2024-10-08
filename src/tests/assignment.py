@@ -14,5 +14,5 @@ class Assignment:
             generate=generate,
             verification_file=self.verification_file,
         )
-        results = self.test_func(**kwargs)
+        results: dict = self.test_func(**kwargs)
         return results
