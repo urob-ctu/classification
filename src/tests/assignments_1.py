@@ -11,7 +11,7 @@ def test_assignment_1_1(
     knn_module = load_module(src_dir, "knn_classifier")
     KNNClassifier = knn_module.KNNClassifier
 
-    ret = {"points": 0, "message": "", "max_points": 1}
+    ret = {"points": 0, "message": "", "max_points": 0.5}
 
     np.random.seed(seed)
 

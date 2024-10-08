@@ -12,7 +12,7 @@ def test_assignment_3_1(
     lin_classifier_module = load_module(src_dir, "linear_classifier")
     LinearClassifier = lin_classifier_module.LinearClassifier
 
-    ret = {"points": 0, "message": "", "max_points": 1}
+    ret = {"points": 0, "message": "", "max_points": 0.5}
 
     num_classes = 10
     num_features = 5
@@ -60,7 +60,7 @@ def test_assignment_3_2(
     lin_classifier_module = load_module(src_dir, "linear_classifier")
     LinearClassifier = lin_classifier_module.LinearClassifier
 
-    ret = {"points": 0, "message": "", "max_points": 1}
+    ret = {"points": 0, "message": "", "max_points": 0.5}
 
     num_classes = 10
     num_features = 5
