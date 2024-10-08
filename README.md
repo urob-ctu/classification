@@ -173,7 +173,7 @@ suboptimal grade. If you have any questions, please reach out to the teaching as
 To test your code, you can run the following command in your terminal:
 
 ```shell
-hw1-test
+hw1-test-assignments
 ```
 
 ## How to submit
