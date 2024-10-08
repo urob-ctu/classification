@@ -28,7 +28,7 @@ from tests import (
 PROJECT_DIR = os.path.abspath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, os.pardir)
 )
-MAX_POINTS = 10
+MAX_POINTS = 8.5
 MODULES = ["tuning", "knn_classifier", "mlp_classifier", "linear_classifier"]
 
 RESULT = {
