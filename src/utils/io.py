@@ -77,12 +77,41 @@ def download_cifar10(directory: str) -> None:
     # Download CIFAR-10 dataset
     url = "https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz"
     tar = "cifar-10-python.tar.gz"
-    subprocess.call(["wget", url])
 
-    # Extract and move to the specified directory
-    subprocess.call(["tar", "-xvzf", tar])
-    subprocess.call(["mv", "cifar-10-batches-py", directory])
-    subprocess.call(["rm", tar])
+    # Download the tar file
+    result = subprocess.run(["wget", url], check=True, capture_output=True, text=True)
+    if result.returncode == 0:
+        print(result.stdout)
+    if result.returncode != 0:
+        print(f"Command failed with error: {result.stderr}")
+
+    # Extract the tar file
+    result = subprocess.run(
+        ["tar", "-xvzf", tar], check=True, capture_output=True, text=True
+    )
+    if result.returncode == 0:
+        print(result.stdout)
+    if result.returncode != 0:
+        print(f"Command failed with error: {result.stderr}")
+
+    # Move the extracted files to the specified directory
+    result = subprocess.run(
+        ["mv", "cifar-10-batches-py", directory],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode == 0:
+        print(result.stdout)
+    if result.returncode != 0:
+        print(f"Command failed with error: {result.stderr}")
+
+    # Remove the tar file
+    result = subprocess.run(["rm", tar], check=True, capture_output=True, text=True)
+    if result.returncode == 0:
+        print(result.stdout)
+    if result.returncode != 0:
+        print(f"Command failed with error: {result.stderr}")
 
 
 def load_cifar10_bach_file(file: str) -> Tuple[np.ndarray, np.ndarray]:
