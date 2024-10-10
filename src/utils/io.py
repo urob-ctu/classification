@@ -78,6 +78,14 @@ def download_cifar10(directory: str) -> None:
     url = "https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz"
     tar = "cifar-10-python.tar.gz"
 
+    # Check if the tar file already exists
+    if os.path.exists(tar):
+        result = subprocess.run(["rm", tar], check=True, capture_output=True, text=True)
+        if result.returncode == 0:
+            print(result.stdout)
+        if result.returncode != 0:
+            print(f"Command failed with error: {result.stderr}")
+
     # Download the tar file
     result = subprocess.run(["wget", url], check=True, capture_output=True, text=True)
     if result.returncode == 0:
