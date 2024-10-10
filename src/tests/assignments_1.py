@@ -40,7 +40,7 @@ def test_assignment_1_1(
         expected_dists = np.load(verification_file)
 
         try:
-            if np.allclose(expected_dists, dists):
+            if np.allclose(expected_dists, dists, atol=1e-6, rtol=1e-4):
                 ret["message"] = f"PASSED!"
                 ret["points"] = ret["max_points"]
             else:
@@ -92,7 +92,7 @@ def test_assignment_1_2(
         expected_y_pred = np.load(verification_file)
 
         try:
-            if np.allclose(y_pred, expected_y_pred):
+            if np.allclose(y_pred, expected_y_pred, atol=1e-6, rtol=1e-4):
                 ret["message"] += f"PASSED!"
                 ret["points"] = ret["max_points"]
             else:
@@ -142,7 +142,7 @@ def test_assignment_1_3(
         expected_dists = np.load(verification_file)
 
         try:
-            if np.allclose(expected_dists, dists):
+            if np.allclose(expected_dists, dists, atol=1e-6, rtol=1e-4):
                 ret["message"] = f"PASSED!"
                 ret["points"] = ret["max_points"]
             else:

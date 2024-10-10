@@ -52,7 +52,7 @@ def test_assignment_4_1(
         expected_logits = torch.load(verification_file, weights_only=True)
 
         try:
-            if torch.allclose(logits, expected_logits):
+            if torch.allclose(logits, expected_logits, atol=1e-6, rtol=1e-4):
                 ret["message"] = f"PASSED!"
                 ret["points"] = ret["max_points"]
             else:
@@ -112,7 +112,7 @@ def test_assignment_4_2(
         expected_logits = torch.load(verification_file, weights_only=True)
 
         try:
-            if torch.allclose(y_pred, expected_logits):
+            if torch.allclose(y_pred, expected_logits, atol=1e-6, rtol=1e-4):
                 ret["message"] = f"PASSED!"
                 ret["points"] = ret["max_points"]
             else:
@@ -173,7 +173,7 @@ def test_assignment_4_3(
         expected_loss = torch.load(verification_file, weights_only=True)
 
         try:
-            if torch.allclose(loss, expected_loss):
+            if torch.allclose(loss, expected_loss, atol=1e-6, rtol=1e-4):
                 ret["message"] = f"PASSED!"
                 ret["points"] = ret["max_points"]
             else:

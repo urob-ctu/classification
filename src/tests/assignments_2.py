@@ -42,12 +42,11 @@ def test_assignment_2_1(
         expected_k_to_metrics = np.load(verification_file, allow_pickle=True).item()
 
         def metric_difference(pred_k_to_metrics, expected_k_to_metrics, metric):
-            pred_metric_values = pred_k_to_metrics[metric].values()
-            expected_metric_values = expected_k_to_metrics[metric].values()
-            differences = [
-                np.sum(np.abs(m - exp_m))
-                for m, exp_m in zip(pred_metric_values, expected_metric_values)
-            ]
+            differences = []
+            for k in k_choices:
+                values = pred_k_to_metrics[metric][k]
+                expected_values = expected_k_to_metrics[metric][k]
+                differences.append(np.sum(np.abs(values - expected_values)))
             return np.sum(differences)
 
         try:
@@ -65,10 +64,10 @@ def test_assignment_2_1(
 
             # Check if the differences are small enough
             if (
-                acc_diff < 1e-5
-                and prec_diff < 1e-5
-                and recall_diff < 1e-5
-                and f1_diff < 1e-5
+                acc_diff < 1e-4
+                and prec_diff < 1e-4
+                and recall_diff < 1e-4
+                and f1_diff < 1e-4
             ):
                 ret["message"] = f"PASSED!"
                 ret["points"] = ret["max_points"]

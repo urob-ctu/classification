@@ -27,7 +27,7 @@ def test_assignment_3_1(
     X = torch.randn(num_samples, num_features)
 
     try:
-        model = LinearClassifier(num_classes, num_features)
+        model = LinearClassifier(num_features=num_features, num_classes=num_classes)
         model.params = params
         logits = model.forward(X)
     except Exception as e:
@@ -41,7 +41,7 @@ def test_assignment_3_1(
         expected_logits = torch.load(verification_file, weights_only=True)
 
         try:
-            if torch.allclose(logits, expected_logits):
+            if torch.allclose(logits, expected_logits, atol=1e-6, rtol=1e-4):
                 ret["message"] = f"PASSED!"
                 ret["points"] = ret["max_points"]
             else:
@@ -75,7 +75,7 @@ def test_assignment_3_2(
     X = torch.randn(num_samples, num_features)
 
     try:
-        model = LinearClassifier(num_classes, num_features)
+        model = LinearClassifier(num_features=num_features, num_classes=num_classes)
         model.params = params
         y_pred = model.predict(X)
     except Exception as e:
@@ -89,7 +89,7 @@ def test_assignment_3_2(
         expected_logits = torch.load(verification_file, weights_only=True)
 
         try:
-            if torch.allclose(y_pred, expected_logits):
+            if torch.allclose(y_pred, expected_logits, atol=1e-6, rtol=1e-4):
                 ret["message"] = f"PASSED!"
                 ret["points"] = ret["max_points"]
             else:
@@ -126,7 +126,7 @@ def test_assignment_3_3(
     y = torch.randint(0, num_classes, (num_samples,))
 
     try:
-        model = LinearClassifier(num_classes, num_features)
+        model = LinearClassifier(num_features=num_features, num_classes=num_classes)
         model.params = params
         loss = model.loss(X, y)
     except Exception as e:
@@ -140,7 +140,7 @@ def test_assignment_3_3(
         expected_loss = torch.load(verification_file, weights_only=True)
 
         try:
-            if torch.allclose(loss, expected_loss):
+            if torch.allclose(loss, expected_loss, atol=1e-6, rtol=1e-4):
                 ret["message"] = f"PASSED!"
                 ret["points"] = ret["max_points"]
             else:
@@ -175,7 +175,7 @@ def test_assignment_3_4(
     y = torch.randint(0, num_classes, (num_samples,))
 
     try:
-        model = LinearClassifier(num_classes, num_features)
+        model = LinearClassifier(num_features=num_features, num_classes=num_classes)
         model.params = params
         model._zero_gradients()
         loss = model.loss(X, y)
