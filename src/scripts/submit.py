@@ -26,35 +26,42 @@ ZIP_FILE = "hw1.zip"
 def preprocess_notebooks(
     input_files: List[Path], output_files: List[Path], root_path: Path
 ) -> None:
-    """This function preprocesses the Jupyter notebooks by replacing the relative paths of the images
-    with absolute paths.
-
-    Example:
-        <img src="relative/path.png" ...> -> <img src="root_path/relative/path.png" ...>
-
+    """Preprocess Jupyter notebooks by replacing relative image paths with absolute paths.
+    
+    If preprocessing fails, the original notebook will still be copied to the output folder.
+    
     Args:
         input_files (List[Path]): List of input Jupyter notebook files.
         output_files (List[Path]): List of output Jupyter notebook files.
         root_path (Path): Path to the root folder.
-
+    
     Returns:
         None
     """
-
     for input_path, output_path in zip(input_files, output_files):
-        with open(input_path, "r") as infile:
-            notebook = nbformat.read(infile, as_version=4)
+        try:
+            # Attempt to preprocess the notebook
+            with open(input_path, "r") as infile:
+                notebook = nbformat.read(infile, as_version=4)
 
-        for cell in notebook.cells:
-            if cell.cell_type == "markdown":
-                cell.source = cell.source.replace(
-                    '<img src="', f'<img src="{root_path}/'
-                )
+            # Replace relative paths in markdown cells
+            for cell in notebook.cells:
+                if cell.cell_type == "markdown":
+                    cell.source = cell.source.replace(
+                        '<img src="', f'<img src="{root_path}/'
+                    )
 
+            # Write the preprocessed notebook to the output file
             with open(output_path, "w") as outfile:
                 nbformat.write(notebook, outfile)
 
-        print(f"\tINFO: Preprocessed {os.path.basename(input_path)}")
+            print(f"\tINFO: Preprocessed {input_path.name}")
+        
+        except Exception as e:
+            # If preprocessing fails, copy the original notebook to the output location
+            shutil.copy(input_path, output_path)
+            print(f"\tWARNING: Preprocessing failed for {input_path.name}. Copied without modification. Error: {e}")
+
 
 
 def create_html_files(jupyter_files: List[Path], remove_original: bool = True):
