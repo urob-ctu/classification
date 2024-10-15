@@ -15,3 +15,5 @@ data/models/*
 
 .idea/
 .vscode/
+
+*/.ipynb_checkpoints/

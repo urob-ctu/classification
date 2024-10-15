@@ -1,6 +1,9 @@
 import os
+import shutil
 import pickle
+import tarfile
 import subprocess
+import urllib.request
 import importlib.util
 from typing import Tuple
 
@@ -80,46 +83,51 @@ def download_cifar10(directory: str) -> None:
 
     # Check if the tar file already exists
     if os.path.exists(tar):
-        result = subprocess.run(["rm", tar], check=True, capture_output=True, text=True)
-        if result.returncode == 0:
-            print(result.stdout)
-        if result.returncode != 0:
-            print(f"Command failed with error: {result.stderr}")
+        os.remove(tar)
+        
+    # Check if the tar file already exists and remove it if necessary
+    if os.path.exists(tar):
+        try:
+            os.remove(tar)
+            print(f"Removed existing file: {tar}")
+        except OSError as e:
+            print(f"Error removing file: {e}")
 
     # Download the tar file
-    result = subprocess.run(["wget", url], check=True, capture_output=True, text=True)
-    if result.returncode == 0:
-        print(result.stdout)
-    if result.returncode != 0:
-        print(f"Command failed with error: {result.stderr}")
+    try:
+        print(f"Downloading {tar} from {url}...")
+        urllib.request.urlretrieve(url, tar)
+        print(f"Downloaded {tar}")
+    except Exception as e:
+        print(f"Error downloading the file: {e}")
 
     # Extract the tar file
-    result = subprocess.run(
-        ["tar", "-xvzf", tar], check=True, capture_output=True, text=True
-    )
-    if result.returncode == 0:
-        print(result.stdout)
-    if result.returncode != 0:
-        print(f"Command failed with error: {result.stderr}")
+    if os.path.exists(tar):
+        try:
+            with tarfile.open(tar, "r:gz") as tar_ref:
+                tar_ref.extractall(".")
+                print(f"Extracted {tar}")
+        except tarfile.TarError as e:
+            print(f"Error extracting tar file: {e}")
 
     # Move the extracted files to the specified directory
-    result = subprocess.run(
-        ["mv", "cifar-10-batches-py", directory],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode == 0:
-        print(result.stdout)
-    if result.returncode != 0:
-        print(f"Command failed with error: {result.stderr}")
+    extracted_folder = "cifar-10-batches-py"
+    if os.path.exists(extracted_folder):
+        try:
+            if os.path.exists(directory):
+                shutil.rmtree(directory)
+            shutil.move(extracted_folder, directory)
+            print(f"Moved {extracted_folder} to {directory}")
+        except OSError as e:
+            print(f"Error moving files: {e}")
 
     # Remove the tar file
-    result = subprocess.run(["rm", tar], check=True, capture_output=True, text=True)
-    if result.returncode == 0:
-        print(result.stdout)
-    if result.returncode != 0:
-        print(f"Command failed with error: {result.stderr}")
+    if os.path.exists(tar):
+        try:
+            os.remove(tar)
+            print(f"Removed tar file: {tar}")
+        except OSError as e:
+            print(f"Error removing tar file: {e}")
 
 
 def load_cifar10_bach_file(file: str) -> Tuple[np.ndarray, np.ndarray]:
