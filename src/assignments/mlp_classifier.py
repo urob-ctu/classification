@@ -232,16 +232,7 @@ class MLPClassifier:
         #                    ║                       ║
         #                    ╚═══════════════════════╝
         #
-        # REMOVE STAR
 
-
-        with torch.no_grad():
-            for name in self.params.keys():
-                self.params[name].data = (
-                    self.params[name].data - self.learning_rate * self.params[name].grad
-                )
-
-        # REMOVE END
         # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 
     def _zero_gradients(self):
