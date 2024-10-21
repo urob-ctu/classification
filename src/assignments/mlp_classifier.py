@@ -215,12 +215,12 @@ class MLPClassifier:
     def _update_weights(self):
         """Update the weights of the model using the gradient descent."""
 
-        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 3.4 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
+        # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 4.4 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
         # TODO:                                                             #
-        # Implement the loss function of the model. The loss function       #
-        # should be the cross-entropy loss with L2 regularization.          #
+        # Implement the weight update step using the gradient descent.      #
         #                                                                   #
-        # HINT: You may find torch.nn.CrossEntropyLoss() useful.            #
+        # HINT: Use the self.learning_rate attribute for the learning rate  #
+        # and update the .data attribute of the model parameters.           #
         #                                                                   #
         # Good luck!                                                        #
         # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
@@ -232,7 +232,16 @@ class MLPClassifier:
         #                    ║                       ║
         #                    ╚═══════════════════════╝
         #
+        # REMOVE STAR
 
+
+        with torch.no_grad():
+            for name in self.params.keys():
+                self.params[name].data = (
+                    self.params[name].data - self.learning_rate * self.params[name].grad
+                )
+
+        # REMOVE END
         # 🌀 TERMINATION 🌀 (Your code reaches its end. 🏁 Do not delete this line.)
 
     def _zero_gradients(self):

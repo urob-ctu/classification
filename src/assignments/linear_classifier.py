@@ -196,12 +196,10 @@ class LinearClassifier:
 
         # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱ Assignment 3.4 ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #
         # TODO:                                                             #
-        # Implement the loss function of the model. The loss function       #
-        # should be the cross-entropy loss with L2 regularization.          #
+        # Implement the weight update step using the gradient descent.      #
         #                                                                   #
-        # HINT 1: You may find torch.nn.CrossEntropyLoss() useful.          #
-        # HINT 2: Use the self.learning_rate attribute for the              #
-        # learning rate.                                                    #
+        # HINT: Use the self.learning_rate attribute for the learning rate  #
+        # and update the .data attribute of the model parameters.           #
         #                                                                   #
         # Good luck!                                                        #
         # ▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰▱▰ #

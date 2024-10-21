@@ -1,4 +1,4 @@
-# HW 2 - Classification
+# HW 1 - Classification
 
 This is official repository for the first homework assignment of the
 course [UROB](https://intranet.fel.cvut.cz/cz/education/bk/predmety/66/51/p6651806.html). The assignment is about
@@ -192,5 +192,5 @@ Once you've completed the assignment and are ready to submit your work, use the 
 hw1-submit
 ```
 
-This will create a zip file named `hw2.zip` in the project's root directory. Submit this file to
+This will create a zip file named `hw1.zip` in the project's root directory. Submit this file to
 the [BRUTE](https://cw.felk.cvut.cz/brute/student/) system.
